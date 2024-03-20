@@ -34,6 +34,7 @@ const Password = (props) => {
                 <Button
                     className="bg-[#1677ff]"
                     type="primary"
+                    onClick={() => handleLogin(3)}
                 >
                     Next
                 </Button>

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 // components
 import SignIn from "./SignIn";
 import Password from "./Password";
@@ -11,9 +13,15 @@ const Login =  () => {
         tab: 0,
     });
 
+    const navigate = useNavigate();
+
     const handleLogin = (tab) => {
-        state.tab = tab;
-        setState(prev => ({...prev}));
+        if (tab !== 3) {
+            state.tab = tab;
+            setState(prev => ({...prev}));
+            return;
+        };
+        navigate({pathname:'/'})        
     };
 
     const renderPage = () => {
