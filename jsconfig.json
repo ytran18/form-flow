@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "baseUrl": ".",
+        "paths": {
+            "@core/*": [
+                "src/core/*"
+            ],
+            "@pages/*": [
+                "src/pages/*"
+            ],
+            "@images/*": [
+                "src/assets/images/*"
+            ],
+            "@components/*": [
+                "src/components/*"
+            ],
+            "@icon/*": [
+                "src/assets/icons/*"
+            ]
+        }
+    },
+}
