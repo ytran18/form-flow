@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Dropdown, Popover } from 'antd';
+import { Dropdown, Popover, Modal, Input } from 'antd';
 
 import IconForm from '@icon/iconForm.svg';
 import IconMore from '@icon/iconMore.svg';
@@ -12,6 +12,8 @@ const Card = () => {
 
     const [state, setState] = useState({
         isOpenContextMenu: false,
+        isOpenModalRename: false,
+        isOpenModalRemove: false,
     });
 
     const contextMenu = [
@@ -19,21 +21,42 @@ const Card = () => {
             label: 'Rename',
             key: '1',
             icon: <IconTitle />,
+            onClick: () => handleRename(),
         },
         {
             label: 'Remove',
             key: '2',
-            icon: <IconTrash />
+            icon: <IconTrash />,
+            onClick: () => handleRemove(),
         },
         {
             label: 'Open in new tab',
             key: '3',
-            icon: <IconNewTab />
+            icon: <IconNewTab />,
+            onClick: () => handleOpenInNewTab(),
         },
     ];
 
     const onOpenChange = (status) => {
         state.isOpenContextMenu = status;
+        setState(prev => ({...prev}));
+    };
+
+    const handleRename = (status) => {
+        state.isOpenModalRename = status !== undefined ? status : true;
+        state.isOpenContextMenu = false,
+        setState(prev => ({...prev}));
+    };
+    
+    const handleRemove = (status) => {
+        state.isOpenModalRemove = status !== undefined ? status : true;
+        state.isOpenContextMenu = false,
+        setState(prev => ({...prev}));
+    };
+    
+    const handleOpenInNewTab = () => {
+        console.log('open in new tab');
+        state.isOpenContextMenu = false,
         setState(prev => ({...prev}));
     };
 
@@ -62,6 +85,7 @@ const Card = () => {
                                         {contextMenu.map((item, index) => {
                                             return (
                                                 <div
+                                                    onClick={item.onClick}
                                                     className="w-full rounded-md flex items-center gap-3 hover:bg-[rgb(245,245,245)] cursor-pointer p-2"
                                                     key={`context-menu-${index}`}
                                                 >
@@ -78,6 +102,33 @@ const Card = () => {
                         </div>
                     </div>
                 </div>
+                <Modal
+                    open={state.isOpenModalRename}
+                    okText="OK"
+                    title="Rename"
+                    okButtonProps={{className:"bg-[rgb(132,47,207)]"}}
+                    cancelButtonProps={{className:"text-[rgb(132,47,207)]"}}
+                    cancelText="Cancel"
+                    onOk={() => handleRename(false)}
+                    onCancel={() => handleRename(false)}
+                >
+                    <div className="flex flex-col gap-3">
+                        <div>Please enter a new name for the item:</div>
+                        <Input placeholder="Enter new name"/>
+                    </div>
+                </Modal>
+                <Modal
+                    open={state.isOpenModalRemove}
+                    okText="OK"
+                    title="Delete form?"
+                    okButtonProps={{className:"bg-[rgb(132,47,207)]"}}
+                    cancelButtonProps={{className:"text-[rgb(132,47,207)]"}}
+                    cancelText="Cancel"
+                    onOk={() => handleRemove(false)}
+                    onCancel={() => handleRemove(false)}
+                >
+                    <div>This item will be deleted, are you sure?</div>
+                </Modal>
             </div>
         </Dropdown>
     );
