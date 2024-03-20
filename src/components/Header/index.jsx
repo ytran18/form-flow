@@ -71,7 +71,7 @@ const Header = () => {
     );
 
     return (
-        <div className="w-screen h-16 flex items-center justify-between px-20">
+        <div className="w-full h-full flex items-center justify-between px-8 ml:px-20">
             <div className="flex items-center gap-3">
                 <IconForm className="cursor-pointer"/>
                 <div className="font-semibold text-xl">Forms</div>
