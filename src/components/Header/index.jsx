@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Avatar, Button, Input, Popover, Upload, message } from 'antd';
 import { UserOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -10,13 +10,20 @@ const { Search } = Input;
 
 const Header = (props) => {
 
-    const { handleLogout } = props;
+    const { handleLogout, user } = props;
 
     const [state, setState] = useState({
         isOpenUserMenu: false,
         loading: false,
         imageUrl: "",
     });
+
+    useEffect(() => {
+        if (user) {
+            state.imageUrl = user?.avt_url;
+            setState(prev => ({...prev}));
+        };
+    },[user]);
 
     const getBase64 = (img, callback) => {
         const reader = new FileReader();
@@ -100,7 +107,7 @@ const Header = (props) => {
                     }
                     content={
                         <div className="flex flex-col items-center gap-3">
-                            <div className="">ynhutran84@gmail.com</div>
+                            <div className="">{user?.email}</div>
                             <Upload
                                 name="avatar"
                                 listType="picture-circle"
@@ -135,7 +142,8 @@ const Header = (props) => {
                 >
                     <Avatar
                         style={{background: '#87d068'}}
-                        icon={<UserOutlined />}
+                        icon={state.imageUrl === '' && <UserOutlined />}
+                        src={state.imageUrl}
                         className="cursor-pointer"
                     />
                 </Popover>

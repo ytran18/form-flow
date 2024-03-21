@@ -50,7 +50,7 @@ const Dashboard = () => {
     const handleLogout = () => {
         setTimeout(() => {
             dispatch(clear());
-            message.success('Logout successfully', 3);
+            message.success('Log out successfully');
             navigate({pathname:'/login'});
         },3000);
     };
@@ -59,6 +59,7 @@ const Dashboard = () => {
         <div className="w-screen h-screen relative flex flex-col gap-10">
             <div className="h-16 w-full">
                 <Header
+                    user={user}
                     handleLogout={handleLogout}
                 />
             </div>

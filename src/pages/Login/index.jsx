@@ -22,7 +22,7 @@ const Login =  () => {
     const user = useUserPackageHook();
 
     useEffect(() => {
-        if (user) navigate({pathname:'/'})
+        if (Object.keys(user).length > 0) navigate({pathname:'/'})
     },[user]);
 
     const handleLogin = (tab, email) => {
@@ -33,7 +33,7 @@ const Login =  () => {
             return;
         };
 
-        message.success('Login successfully', 3);
+        message.success('Log in successfully', 3);
         navigate({pathname:'/'})   ;     
     };
 
