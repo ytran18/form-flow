@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 
 import { message } from "antd";
+
+import { useUserPackageHook } from "@core/redux/hooks";
 
 // components
 import SignIn from "./SignIn";
@@ -17,6 +19,11 @@ const Login =  () => {
     });
 
     const navigate = useNavigate();
+    const user = useUserPackageHook();
+
+    useEffect(() => {
+        if (user) navigate({pathname:'/'})
+    },[user]);
 
     const handleLogin = (tab, email) => {
         if (tab !== 3) {
