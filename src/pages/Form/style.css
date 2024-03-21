@@ -1,0 +1,25 @@
+.ant-tabs-content-holder {
+    width: 100%;
+    height: 100%;
+}
+
+.ant-tabs-content {
+    height: 100%;
+}
+
+.ant-tabs-tabpane {
+    height: 100%;
+}
+
+.ant-tabs-nav {
+    margin: 0 !important;
+    border-bottom: 1px solid rgb(219,219,219);
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: rgb(103,58,183) !important;
+}
+
+.ant-tabs-tab-btn {
+    color: black !important;
+}

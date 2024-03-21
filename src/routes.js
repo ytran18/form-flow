@@ -8,6 +8,10 @@ const AppRoutes = [
     {
         path: '/',
         Component: Page?.DashboardPage,
+    },
+    {
+        path: '/form',
+        Component: Page?.FormPage,
     }
 ];
 
