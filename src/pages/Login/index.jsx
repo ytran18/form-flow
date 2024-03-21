@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import { message } from "antd";
+
 // components
 import SignIn from "./SignIn";
 import Password from "./Password";
@@ -11,17 +13,21 @@ const Login =  () => {
 
     const [state, setState] = useState({
         tab: 0,
+        emailLogin: '',
     });
 
     const navigate = useNavigate();
 
-    const handleLogin = (tab) => {
+    const handleLogin = (tab, email) => {
         if (tab !== 3) {
             state.tab = tab;
+            state.emailLogin = email;
             setState(prev => ({...prev}));
             return;
         };
-        navigate({pathname:'/'})        
+
+        message.success('Login successfully', 3);
+        navigate({pathname:'/'})   ;     
     };
 
     const renderPage = () => {
@@ -36,6 +42,7 @@ const Login =  () => {
                 return (
                     <Password
                         handleLogin={handleLogin}
+                        email={state.emailLogin}
                     />
                 );
             case 2:
