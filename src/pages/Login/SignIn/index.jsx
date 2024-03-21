@@ -3,7 +3,11 @@ import React, { useState } from "react";
 // library
 import { Input, Button, message } from 'antd';
 import { collection, getDocs } from 'firebase/firestore';
-import { fireStore } from "@core/firebase/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { fireStore, auth } from "@core/firebase/firebase";
+
+import { userPackage } from "@core/redux/actions";
+import { useDispatch } from "react-redux";
 
 import { isValidEmail } from "@utils/function.js";
 
@@ -13,6 +17,7 @@ import IconGoogle from '@icon/iconGoogle.svg';
 const SignIn = (props) => {
 
     const { handleLogin } = props;
+    const dispatch = useDispatch();
 
     const [state, setState] = useState({
         email: '',
@@ -64,6 +69,38 @@ const SignIn = (props) => {
 
     };
 
+    const handleLoginWithGoogle = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const currEmail = result._tokenResponse.email;
+                
+                // check if user exist
+                const usersRef = collection(fireStore, 'users');
+                getDocs(usersRef).then((querySnapshot) => {
+                    let users = []
+                    querySnapshot.forEach((doc) => {
+                        if (doc.data()) users.push(doc.data());
+                    });
+
+                    let isExist = false;
+                    users.find((user) => {
+                        if (user.email === currEmail) isExist = true;
+                    });
+
+                    if (!isExist) {
+                        message.error('User does not exist, please create new acccount!', 3);
+                    } else {
+                        dispatch(userPackage(users.find((user) => user.email === currEmail)));
+                        handleLogin(3);
+                    };
+                });
+            })
+            .catch((error) => {
+                message.error(error.message, 3);
+            });
+    };
+
     return (
         <div className="w-full flex flex-col gap-8">
             <Input
@@ -89,8 +126,12 @@ const SignIn = (props) => {
             <div className="w-full h-[1px] bg-[rgb(219,219,219)] relative">
                 <div className="absolute text-sm left-1/2 -top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 py-1">Or</div>
             </div>
-            <Button className="h-12 flex items-center justify-center font-semibold" icon={<IconGoogle />}>
-                Login with Google
+            <Button
+                className="h-12 flex items-center justify-center font-semibold"
+                icon={<IconGoogle />}
+                onClick={handleLoginWithGoogle}
+            >
+                Log In with Google
             </Button>
         </div>
     );

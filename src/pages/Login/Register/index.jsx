@@ -4,14 +4,24 @@ import React, { useState } from "react";
 import { Button, Input, Checkbox, message } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
-import { doc, collection, setDoc } from 'firebase/firestore';
-import { fireStore } from "@core/firebase/firebase";
+import { doc, collection, setDoc, getDocs } from 'firebase/firestore';
+import { fireStore, auth } from "@core/firebase/firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+
+import { useDispatch } from "react-redux";
+import { userPackage } from "@core/redux/actions";
+
+import { useNavigate } from "react-router-dom";
 
 import { isValidEmail } from "@utils/function.js";
+
+import IconGoogle from '@icon/iconGoogle.svg';
 
 const Register = (props) => {
 
     const { handleLogin } = props;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [state, setState] = useState({
         typePassword: 'password',
@@ -69,9 +79,52 @@ const Register = (props) => {
 
     };
 
+    const handleSignUpWithGoogle = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const currEmail = result._tokenResponse.email;
+                
+                // check if user exist
+                const usersRef = collection(fireStore, 'users');
+                getDocs(usersRef).then((querySnapshot) => {
+                    let users = []
+                    querySnapshot.forEach((doc) => {
+                        if (doc.data()) users.push(doc.data());
+                    });
+
+                    let isExist = false;
+                    users.find((user) => {
+                        if (user.email === currEmail) isExist = true;
+                    });
+
+                    if (isExist) {
+                        message.error('User already exist', 3);
+                        handleLogin(0);
+                    } else {
+                        const newUser = {
+                            _id: uuidv4(),
+                            email: result._tokenResponse.email,
+                            password: "123456",
+                            avt_url: result._tokenResponse.photoUrl,
+                            created_at: new Date().toLocaleString(),
+                        };
+
+                        const docRef = doc(collection(fireStore, 'users'), newUser._id);
+                        dispatch(userPackage(newUser));
+                        setDoc(docRef, newUser);
+                        navigate({pathname:'/'})
+                    };
+                });
+            })
+            .catch((error) => {
+                message.error(error.message, 3);
+            });
+    };
+
     return (
-        <div className="w-full flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
                 <Input
                     value={state.email}
                     onChange={handleEmail}
@@ -112,6 +165,16 @@ const Register = (props) => {
                     Next
                 </Button>
             </div>
+            <div className="w-full h-[1px] bg-[rgb(219,219,219)] relative">
+                <div className="absolute text-sm left-1/2 -top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-6 py-1">Or</div>
+            </div>
+            <Button
+                className="h-12 flex items-center justify-center font-semibold"
+                icon={<IconGoogle />}
+                onClick={handleSignUpWithGoogle}
+            >
+                Sign Up with Google
+            </Button>
         </div>
     );
 };
