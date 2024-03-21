@@ -31,10 +31,10 @@ const Form = () => {
 
     return (
         <div className="w-screen h-screen flex flex-col">
-            <div className="h-16 w-full">
+            <div className="h-16 min-h-16 max-h-16 w-full">
                 <FormHeader />
             </div>
-            <div className="flex-grow w-full">
+            <div className="flex-grow w-full overflow-y-auto">
                 <Tabs
                     hideAdd
                     centered
@@ -44,7 +44,7 @@ const Form = () => {
                             label: item.label,
                             key: item.key,
                             children: (
-                                <div className="px-80 py-3 w-full h-full bg-[rgb(240,235,248)]">
+                                <div className="px-80 overflow-y-auto py-3 w-full h-full bg-[rgb(240,235,248)]">
                                     {item.children}
                                 </div>
                             ),

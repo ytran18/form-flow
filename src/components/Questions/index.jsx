@@ -1,13 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import QuestionBlock from "@components/QuestionBlock";
 
-const Questions = () => {
+const Questions = (props) => {
+
+    const { type } = props;
 
     const [state, setState] = useState({
         formTitle: 'Untitled form',
         formDescription: '',
+        questions: [],
     });
+
+    useEffect(() => {
+        const item = {
+            title: '',
+            image_url: '',
+            type_answer: '',
+            answer: [],
+            textAnswer: '',
+        };
+
+        state.questions = [item];
+        setState(prev => ({...prev}));
+    },[]);
 
     const onInput = (e) => {
         const element = e.target;
@@ -16,7 +32,7 @@ const Questions = () => {
         } else {
             element.style.height = `${element.scrollHeight}px`;
         };
-}
+    };
 
     return (
         <div className="w-full h-full flex flex-col gap-5">
@@ -40,6 +56,13 @@ const Questions = () => {
                     />
                 </div>
             </div>
+            {state.questions.map((item, index) => {
+                return (
+                    <div className="w-full pb-3" key={`question-${index}`}>
+                        <QuestionBlock />
+                    </div>
+                )
+            })}
         </div>
     );
 };
