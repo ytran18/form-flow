@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Select } from 'antd';
+
+import { useUserPackageHook } from '@core/redux/hooks';
 
 import Header from "@components/Header";
 import Card from "@components/Card";
@@ -8,6 +10,8 @@ import Card from "@components/Card";
 import IconPlus from '@icon/iconPlus.svg';
 
 const Dashboard = () => {
+
+    const user = useUserPackageHook();
 
     const options = [
         {
@@ -31,6 +35,10 @@ const Dashboard = () => {
         const { label, value } = props;
         if (label) return value;
     };
+
+    useEffect(() => {
+        console.log(user);
+    },[user]);
 
     return (
         <div className="w-screen h-screen relative flex flex-col gap-10">

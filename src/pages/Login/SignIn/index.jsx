@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // library
 import { Input, Button, message } from 'antd';
 import { collection, getDocs } from 'firebase/firestore';
-import { fireStore } from "@core/firebase";
+import { fireStore } from "@core/firebase/firebase";
 
 import { isValidEmail } from "@utils/function.js";
 

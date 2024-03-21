@@ -3,12 +3,17 @@ import React, { useState } from "react";
 // library
 import { Button, Input, Checkbox, message } from 'antd';
 
+// redux
+import { useDispatch } from "react-redux";
+import { userPackage } from "@core/redux/actions";
+
 import { collection, getDocs } from 'firebase/firestore';
-import { fireStore } from "@core/firebase";
+import { fireStore } from "@core/firebase/firebase";
 
 const Password = (props) => {
 
     const { handleLogin, email } = props;
+    const dispatch = useDispatch();
 
     const [state, setState] = useState({
         typePassword: 'password',
@@ -30,6 +35,7 @@ const Password = (props) => {
 
             for (let i = 0; i < users.length; i++) {
                 if (users[i].email === email && users[i].password === state.password.trim()) {
+                    dispatch(userPackage(users[i]));
                     handleLogin(3);
                     break;
                 } else if (users[i].email === email && users[i].password !== state.password.trim()) {

@@ -5,7 +5,7 @@ import { Button, Input, Checkbox, message } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
 import { doc, collection, setDoc } from 'firebase/firestore';
-import { fireStore } from "@core/firebase";
+import { fireStore } from "@core/firebase/firebase";
 
 import { isValidEmail } from "@utils/function.js";
 
