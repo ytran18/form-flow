@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 
-import { Select } from 'antd';
+import { Select, message } from 'antd';
+import { useNavigate } from "react-router-dom";
 
 import { useUserPackageHook } from '@core/redux/hooks';
+import { useDispatch } from "react-redux";
+import { clear } from "@core/redux/actions";
 
 import Header from "@components/Header";
 import Card from "@components/Card";
@@ -12,6 +15,8 @@ import IconPlus from '@icon/iconPlus.svg';
 const Dashboard = () => {
 
     const user = useUserPackageHook();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const options = [
         {
@@ -37,13 +42,25 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        console.log(user);
+        if (Object.keys(user).length === 0) {
+            navigate({pathname:'/login'});
+        };
     },[user]);
+
+    const handleLogout = () => {
+        setTimeout(() => {
+            dispatch(clear());
+            message.success('Logout successfully', 3);
+            navigate({pathname:'/login'});
+        },3000);
+    };
 
     return (
         <div className="w-screen h-screen relative flex flex-col gap-10">
             <div className="h-16 w-full">
-                <Header />
+                <Header
+                    handleLogout={handleLogout}
+                />
             </div>
             <div className="flex-grow flex flex-col gap-3 w-full px-8 ml:px-52">
                 <div className="w-full flex items-center justify-between">

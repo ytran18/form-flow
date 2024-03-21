@@ -8,7 +8,9 @@ import IconClose from '@icon/iconClose.svg';
 
 const { Search } = Input;
 
-const Header = () => {
+const Header = (props) => {
+
+    const { handleLogout } = props;
 
     const [state, setState] = useState({
         isOpenUserMenu: false,
@@ -121,7 +123,13 @@ const Header = () => {
                                 }
                             </Upload>
                             <Button className="w-full">Change Password</Button>
-                            <Button className="w-full" danger>Log out</Button>
+                            <Button
+                                className="w-full"
+                                onClick={handleLogout}
+                                danger
+                            >
+                                Log out
+                            </Button>
                         </div>
                     }
                 >
