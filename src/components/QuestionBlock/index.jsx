@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Upload, Select } from 'antd';
+import { Upload, Select, Switch } from 'antd';
 
 import Paragraph from "@components/Paragraph";
 import Choice from "@components/Choice";
@@ -9,12 +9,16 @@ import Dropdown from "@components/Dropdown";
 
 import IconImage from '@icon/iconImage.svg';
 import IconTrash from '@icon/iconTrash.svg';
+import IconCopy from '@icon/iconCopy.svg';
+
+import './style.css';
 
 const QuestionBlock = () => {
 
     const [state, setState] = useState({
         img_url: '',
         typeAnswer: '',
+        isRequire: false,
     });
 
     const typeAnswers = [
@@ -118,8 +122,21 @@ const QuestionBlock = () => {
                     </div>
                 </div>
             )}
-            <div className="w-full">
+            <div className="w-full border-b py-5">
                 {renderAnswer()}
+            </div>
+            <div className="w-full flex items-center py-2 justify-end gap-5">
+                <IconCopy />
+                <IconTrash />
+                <div className="h-8 w-[1px] bg-[rgb(218,220,224)]"></div>
+                <div className="flex items-center gap-2">
+                    Require
+                    <Switch
+                        value={state.isRequire}
+                        className="bg-[rgb(140,140,140)]"
+                        onChange={(value) => setState(prev => ({...prev, isRequire: value}))}
+                    />
+                </div>
             </div>
         </div>
     );
