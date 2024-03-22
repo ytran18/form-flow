@@ -103,7 +103,15 @@ const QuestionBlock = (props) => {
                     />
                 );
             case 'dropdown':
-                return <Dropdown />;
+                return (
+                    <Dropdown
+                        questionId={question._id}
+                        answer={question.answer}
+                        handleInputClickAnswer={handleInputClickAnswer}
+                        handleChangeAnswerIndex={handleChangeAnswerIndex}
+                        handleRemoveAnswer={handleRemoveAnswer}
+                    />
+                )
             default:
                 return (
                     <MultipleChoice

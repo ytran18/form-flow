@@ -1,74 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import IconClose from '@icon/iconClose.svg';
 
-const Dropdown = () => {
+const Dropdown = (props) => {
 
-    const [state, setState] = useState({
-        answer: [],
-    });
-
-    useEffect(() => {
-        const defaultValue = [
-            {
-                value: 1,
-                label: 'Option 1',
-            },
-            {
-                value: 2,
-                label: 'Add option',
-            },
-        ];
-        state.answer = defaultValue;
-        setState(prev => ({...prev}));
-    },[]);
-
-    const handleChangeInput = (e, value) => {
-        const index = state.answer.findIndex(item => item.value === value);
-        state.answer[index].label = e.target.value;
-        setState(prev => ({...prev}));
-    };
+    const { answer, questionId } = props;
+    const { handleInputClickAnswer, handleChangeAnswerIndex, handleRemoveAnswer } = props;
 
     const handleInputClick = (label) => {
         if (label !== 'Add option') return;
-
-        const { answer } = state;
-
-        const newAnswer = {
-            value: answer.length,
-            label: `Option ${answer.length}`,
-        };
-        
-        answer.splice(answer.length - 1, 0, newAnswer);
-        state.answer = answer;
-        setState(prev => ({...prev}));
-    };
-
-    const handleRemoveAnswer = (value) => {
-        const index = state.answer.findIndex(item => item.value === value);
-        state.answer.splice(index, 1);
-        setState(prev => ({...prev}));
+        handleInputClickAnswer(questionId, 'dropdown');
     };
 
     return (
         <div className="w-full flex flex-col gap-5">
-            {state.answer.length > 0 && state.answer.map((item, index) => {
+            {answer.length > 0 && answer.map((item, index) => {
                 return (
                     <div key={`dropdown-${index}`} className="flex items-center gap-5">
                         <div className="text-base">{`${index + 1}.`}</div>
                         <input
                             type="text"
-                            onClick={() => handleInputClick(item.label)}
+                            onClick={() => handleInputClick(item.label, item.value)}
                             defaultValue={item.label !== 'Add option' ? item.label : ''}
                             placeholder={item.label === 'Add option' ? 'Add option' : ''}
-                            value={item.label !== 'Add option' ? state.answer[index].label : ''}
-                            onChange={(e) => handleChangeInput(e, item.value)}
+                            value={item.label !== 'Add option' ? answer[index].label : ''}
+                            onChange={(e) => handleChangeAnswerIndex(e, item.value, questionId)}
                             className={`outline-none w-full py-2 ${item.label === 'Add option' ? 'opacity-55' : ''}`}
                         />
                         {item.label !== 'Add option' && (
                             <IconClose
                                 className="scale-125 cursor-pointer"
-                                onClick={() => handleRemoveAnswer(item.value)}
+                                onClick={() => handleRemoveAnswer(item.value, questionId)}
                             />
                         )}
                     </div>

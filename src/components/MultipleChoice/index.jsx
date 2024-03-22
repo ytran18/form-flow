@@ -37,7 +37,7 @@ const MultipleChoice = (props) => {
             return;
         };
 
-        handleInputClickAnswer(value, questionId);
+        handleInputClickAnswer(questionId, 'choice');
     };
 
     return (

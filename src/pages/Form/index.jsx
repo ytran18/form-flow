@@ -20,6 +20,7 @@ const Form = () => {
         isRequire: false,
     });
 
+    // init question
     useEffect(() => {
 
         const defaultAnswer = [
@@ -40,6 +41,7 @@ const Form = () => {
         setState(prev => ({...prev}));
     },[]);
 
+    // handle add block
     const handleAddBlock = (blockId) => {
         const newItem = {
             _id: uuidv4(),
@@ -57,22 +59,26 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    // change form title
     const onChangeFormTitle = (event) => {
         state.formTitle = event.target.value;
         setState(prev => ({...prev}));
     };
 
+    // change form description
     const onChangeFormDescription = (event) => {
         state.formDescription = event.target.value;
         setState(prev => ({...prev}));
     };
 
+    // change question title
     const onChangeQuestionTitle = (event, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         state.questions[index].title = event.target.value;
         setState(prev => ({...prev}));
     };
 
+    // change question type
     const handleChangeType = (value, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         console.log(state.questions[index], value);
@@ -80,17 +86,20 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    // change question status require
     const handleRequire = (value) => {
         state.isRequire = value;
         setState(prev => ({...prev}));
     };
 
+    // handle upload question image
     const handleUploadQuestionImage = (url, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         state.questions[index].image_url = url;
         setState(prev => ({...prev}));
     };
 
+    // handle change answer label
     const handleChangeAnswerIndex = (e, value, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         const indexAnswer = state.questions[index].answer.findIndex(item => item.value === value);
@@ -98,6 +107,7 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    // handle remove answer
     const handleRemoveAnswer = (value, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         const indexAnswer = state.questions[index].answer.findIndex(item => item.value === value);
@@ -105,6 +115,7 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    // handle upload answer image
     const handleImageAnwer = (url, id, value) => {
         const index = state.questions.findIndex(item => item._id === id);
         const indexAnswer = state.questions[index].answer.findIndex(item => item.value === value);
@@ -112,6 +123,7 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    // handle delete answer image
     const handleDeleteImageAnswer = (value, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         const indexAnswer = state.questions[index].answer.findIndex(item => item.value === value);
@@ -119,15 +131,27 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
-    const handleInputClickAnswer = (id) => {
-        const newAnswer = {
-            value: state.questions[id].answer.length,
-            label: `Option ${state.questions[id].answer.length}`,
-            img_url: '',
+    // handle add answer
+    const handleInputClickAnswer = (id, type) => {
+        const { questions } = state;
+        const index = questions.findIndex(item => item._id === id);
+
+        let newAnswer = {
+            value: state.questions[index].answer.length,
+            label: `Option ${state.questions[index].answer.length}`,
         };
 
-        const index = state.questions.findIndex(item => item._id === id);
-        state.questions[index].answer.splice(answer.length - 1, 0, newAnswer);
+        if (type === 'choice') {
+            newAnswer = {
+                ...newAnswer,
+                img_url: '',
+            };
+        };
+
+        const answers = questions[index].answer;
+
+        answers.splice(answers.length - 1, 0, newAnswer);
+        state.questions[index].answer = answers;
         setState(prev => ({...prev}));
     }
 
