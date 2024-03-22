@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
-import { Upload, Select, Switch } from 'antd';
+import { Upload, Select, Switch, Tooltip } from 'antd';
 
 import Paragraph from "@components/Paragraph";
 import MultipleChoice from "@components/MultipleChoice";
@@ -15,14 +15,10 @@ import './style.css';
 
 const QuestionBlock = (props) => {
 
-    const { question, isRequire } = props;
+    const { question } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, handleRequire, handleUploadQuestionImage, handleRemoveAnswer } = props;
-    const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer } = props;
-
-    const [state, setState] = useState({
-        img_url: '',
-        isRequire: false,
-    });
+    const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer, handleRemoveBlock, handleCopyBlock } = props;
+    const { handleRemoveQuestionImage } = props;
 
     const typeAnswers = [
         {
@@ -70,8 +66,6 @@ const QuestionBlock = (props) => {
         const file = event.file;
         const url = await getBase64(file.originFileObj);
         handleUploadQuestionImage(url, question._id);
-        state.img_url = url;
-        setState(prev => ({...prev}));
     };
 
     const renderAnswer = () => {
@@ -134,6 +128,7 @@ const QuestionBlock = (props) => {
         >
             <div className="w-full flex gap-10">
                 <textarea
+                    value={question.title}
                     onInput={onInput}
                     placeholder="Question"
                     className="w-[400px] tracking-wide min-h-[57px] max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
@@ -159,19 +154,19 @@ const QuestionBlock = (props) => {
                     />
                 </div>
             </div>
-            {state.img_url.length > 0 && (
+            {question?.image_url?.length > 0 && (
                 <div className="relative">
                     <img
                         alt="image"
                         style={{
                             width: '100%',
                         }}
-                        src={state.img_url}
+                        src={question.image_url}
                     />
                     <div className="absolute -top-5 -right-5">
                         <IconTrash
                             className="text-red-400 cursor-pointer"
-                            onClick={() => setState(prev => ({...prev, img_url: ''}))}
+                            onClick={() => handleRemoveQuestionImage(question._id)}
                         />
                     </div>
                 </div>
@@ -180,19 +175,46 @@ const QuestionBlock = (props) => {
                 {renderAnswer()}
             </div>
             <div className="w-full flex items-center py-2 justify-end gap-5">
-                <IconCopy className="cursor-pointer"/>
-                <IconTrash className="cursor-pointer"/>
-                <IconPlus
-                    className="cursor-pointer scale-75"
-                    onClick={() => handleAddBlock(question._id)}
-                />
+                <Tooltip
+                    placement="bottom"
+                    title="Copy"
+                    arrow={false}
+                    color="#9b9b9b"
+                >
+                    <IconCopy
+                        className="cursor-pointer"
+                        onClick={() => handleCopyBlock(question._id)}
+                    />
+                </Tooltip>
+                <Tooltip
+                    placement="bottom"
+                    title="Remove"
+                    arrow={false}
+                    color="#9b9b9b"
+                >
+                    <IconTrash
+                        className="cursor-pointer"
+                        onClick={() => handleRemoveBlock(question._id)}
+                    />
+                </Tooltip>
+                <Tooltip
+                    placement="bottom"
+                    title="Add question"
+                    arrow={false}
+                    color="#9b9b9b"
+                >
+                    <IconPlus
+                        className="cursor-pointer scale-75"
+                        onClick={() => handleAddBlock(question._id)}
+                    />
+                </Tooltip>
                 <div className="h-8 w-[1px] bg-[rgb(218,220,224)]"></div>
                 <div className="flex items-center gap-2">
                     Require
                     <Switch
-                        value={isRequire}
+                        value={question.isRequire}
                         className="bg-[rgb(140,140,140)]"
-                        onChange={handleRequire}
+                        onChange={(value) => handleRequire(value, question._id)}
                     />
                 </div>
             </div>

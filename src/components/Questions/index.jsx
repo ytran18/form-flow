@@ -2,11 +2,16 @@ import React from "react";
 
 import QuestionBlock from "@components/QuestionBlock";
 
+import { Tooltip } from "antd";
+
+import IconPlus from '@icon/iconPlus.svg';
+
 const Questions = (props) => {
 
-    const { questions, formTitle, formDescription, isRequire } = props;
+    const { questions, formTitle, formDescription } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, onChangeFormTitle, onChangeFormDescription, handleRequire } = props;
-    const { handleUploadQuestionImage, handleChangeAnswerIndex, handleRemoveAnswer, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer } = props;
+    const { handleUploadQuestionImage, handleChangeAnswerIndex, handleRemoveAnswer, handleImageAnwer, handleDeleteImageAnswer } = props;
+    const { handleInputClickAnswer, handleCopyBlock, handleRemoveBlock, handleRemoveQuestionImage } = props;
 
     const onInput = (e) => {
         const element = e.target;
@@ -44,7 +49,6 @@ const Questions = (props) => {
                     <div className="w-full pb-3" key={`question-${item._id}`}>
                         <QuestionBlock
                             question={item}
-                            isRequire={isRequire}
                             handleAddBlock={handleAddBlock}
                             onChangeQuestionTitle={onChangeQuestionTitle}
                             handleChangeType={handleChangeType}
@@ -55,10 +59,30 @@ const Questions = (props) => {
                             handleImageAnwer={handleImageAnwer}
                             handleDeleteImageAnswer={handleDeleteImageAnswer}
                             handleInputClickAnswer={handleInputClickAnswer}
+                            handleRemoveBlock={handleRemoveBlock}
+                            handleCopyBlock={handleCopyBlock}
+                            handleRemoveQuestionImage={handleRemoveQuestionImage}
                         />
                     </div>
                 )
             })}
+            {questions.length === 0 && (
+                <div className="w-full flex items-center justify-center">
+                    <Tooltip
+                        placement="bottom"
+                        title="Add question"
+                        arrow={false}
+                        color="#9b9b9b"
+                    >
+                        <div className="p-2 bg-white rounded-full cursor-pointer hover:scale-105 duration-300 shadow-lg">
+                            <IconPlus
+                                className="scale-75"
+                                onClick={handleAddBlock}
+                            />
+                        </div>
+                    </Tooltip>
+                </div>
+            )}
         </div>
     );
 };

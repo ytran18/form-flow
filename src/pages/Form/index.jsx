@@ -17,7 +17,6 @@ const Form = () => {
         formTitle: 'Untitled form',
         formDescription: '',
         questions: [],
-        isRequire: false,
     });
 
     // init question
@@ -35,6 +34,7 @@ const Form = () => {
             type_answer: 'choice',
             answer: defaultAnswer,
             textAnswer: '',
+            isRequire: false,
         };
 
         state.questions = [item];
@@ -43,13 +43,24 @@ const Form = () => {
 
     // handle add block
     const handleAddBlock = (blockId) => {
+        const defaultAnswer = [
+            { value: 1, label: 'Option 1', img_url: '' },
+            { value: 2, label: 'Add option', img_url: ''},
+        ];
+
         const newItem = {
             _id: uuidv4(),
             title: '',
             image_url: '',
             type_answer: 'choice',
-            answer: [],
+            answer: defaultAnswer,
             textAnswer: '',
+        };
+
+        if (!blockId) {
+            state.questions.push(newItem);
+            setState(prev => ({...prev}));
+            return;
         };
     
         const updatedQuestions = [...state.questions];
@@ -81,14 +92,14 @@ const Form = () => {
     // change question type
     const handleChangeType = (value, id) => {
         const index = state.questions.findIndex(item => item._id === id);
-        console.log(state.questions[index], value);
         state.questions[index].type_answer = value;
         setState(prev => ({...prev}));
     };
 
     // change question status require
-    const handleRequire = (value) => {
-        state.isRequire = value;
+    const handleRequire = (value, id) => {
+        const index = state.questions.findIndex(item => item._id === id);
+        state.questions[index].isRequire = value;
         setState(prev => ({...prev}));
     };
 
@@ -133,7 +144,7 @@ const Form = () => {
 
     // handle add answer
     const handleInputClickAnswer = (id, type) => {
-        const { questions } = state;
+        const questions = [...state.questions];
         const index = questions.findIndex(item => item._id === id);
 
         let newAnswer = {
@@ -148,12 +159,40 @@ const Form = () => {
             };
         };
 
-        const answers = questions[index].answer;
+        const answers = [...questions[index].answer];
 
         answers.splice(answers.length - 1, 0, newAnswer);
         state.questions[index].answer = answers;
         setState(prev => ({...prev}));
-    }
+    };
+
+    const handleRemoveBlock = (id) => {
+        const index = state.questions.findIndex(item => item._id === id);
+        state.questions.splice(index, 1);
+        setState(prev => ({...prev}));
+    };
+
+    const handleCopyBlock = (id) => {
+        const questions = [...state.questions];
+
+        const index = questions.findIndex(item => item._id === id);
+        let copyBlock = questions[index];
+
+        let block = {
+            ...copyBlock,
+            _id: uuidv4(),
+        };
+
+        questions.splice(index + 1, 0, block);
+        state.questions = questions;
+        setState(prev => ({...prev}));
+    };
+
+    const handleRemoveQuestionImage = (id) => {
+        const index = state.questions.findIndex(item => item._id === id);
+        state.questions[index].image_url = '';
+        setState(prev => ({...prev}));
+    };
 
     const tabContent = [
         {
@@ -163,7 +202,6 @@ const Form = () => {
                 <Questions
                     questions={state.questions}
                     formTitle={state.formTitle}
-                    isRequire={state.isRequire}
                     formDescription={state.formDescription}
                     onChangeFormTitle={onChangeFormTitle}
                     onChangeFormDescription={onChangeFormDescription}
@@ -177,6 +215,9 @@ const Form = () => {
                     handleImageAnwer={handleImageAnwer}
                     handleDeleteImageAnswer={handleDeleteImageAnswer}
                     handleInputClickAnswer={handleInputClickAnswer}
+                    handleRemoveBlock={handleRemoveBlock}
+                    handleCopyBlock={handleCopyBlock}
+                    handleRemoveQuestionImage={handleRemoveQuestionImage}
                 />
             ),
         },
