@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Upload, Select } from 'antd';
+
+import Paragraph from "@components/Paragraph";
+import Choice from "@components/Choice";
+import MultipleChoice from "@components/MultipleChoice";
+import Dropdown from "@components/Dropdown";
 
 import IconImage from '@icon/iconImage.svg';
 import IconTrash from '@icon/iconTrash.svg';
@@ -54,8 +59,23 @@ const QuestionBlock = () => {
         setState(prev => ({...prev}));
     };
 
+    const renderAnswer = () => {
+        switch (state.typeAnswer) {
+            case 'paragraph':
+                return <Paragraph />;
+            case 'multiple-choice':
+                return <MultipleChoice />;
+            case 'choice':
+                return <Choice />;
+            case 'dropdown':
+                return <Dropdown />;
+            default:
+                return <Choice />;
+        };
+    };
+
     return (
-        <div className="bg-white w-full min-h-[275px] max-h-fit rounded-lg border-[1px] flex flex-col px-8 py-4 gap-5">
+        <div className="bg-white w-full min-h-fit max-h-fit rounded-lg border-[1px] flex flex-col px-8 py-4 gap-5">
             <div className="w-full flex gap-10">
                 <textarea
                     onInput={onInput}
@@ -98,8 +118,8 @@ const QuestionBlock = () => {
                     </div>
                 </div>
             )}
-            <div className="">
-
+            <div className="w-full">
+                {renderAnswer()}
             </div>
         </div>
     );

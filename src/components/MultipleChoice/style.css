@@ -1,0 +1,23 @@
+.ant-radio-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100% !important;
+}
+
+.ant-radio-wrapper span:last-child {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.ant-radio {
+    width: fit-content !important;
+}
+
+.ant-space-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
