@@ -114,7 +114,7 @@ const MultipleChoice = () => {
                                 )}
                                 {item.label !== 'Add option' && (
                                     <IconClose
-                                        className="scale-125"
+                                        className="scale-125 cursor-pointer"
                                         onClick={() => handleRemoveAnswer(item.value)}
                                     />
                                 )}

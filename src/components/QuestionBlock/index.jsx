@@ -70,11 +70,11 @@ const QuestionBlock = () => {
             case 'multiple-choice':
                 return <MultipleChoice />;
             case 'choice':
-                return <Choice />;
+                return <MultipleChoice />;
             case 'dropdown':
                 return <Dropdown />;
             default:
-                return <Choice />;
+                return <MultipleChoice />;
         };
     };
 
