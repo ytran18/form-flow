@@ -23,3 +23,7 @@
 .ant-tabs-tab-btn {
     color: black !important;
 }
+
+.send-form .ant-modal-title {
+    font-size: 20px;
+}

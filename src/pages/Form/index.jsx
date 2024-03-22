@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import { Tabs } from 'antd';
+import { Tabs, Modal, message } from 'antd';
 
 import { v4 as uuidv4 } from "uuid";
+
+import { fireStore, storage } from '@core/firebase/firebase';
+import { doc, collection, setDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import FormHeader from "@components/FormHeader";
 import Questions from "@components/Questions";
@@ -17,6 +21,7 @@ const Form = () => {
         formTitle: 'Untitled form',
         formDescription: '',
         questions: [],
+        isVisibleModalSend: false,
     });
 
     // init question
@@ -106,8 +111,14 @@ const Form = () => {
     // handle upload question image
     const handleUploadQuestionImage = (url, id) => {
         const index = state.questions.findIndex(item => item._id === id);
-        state.questions[index].image_url = url;
-        setState(prev => ({...prev}));
+
+        const imageRef = ref(storage, `images/${url.uid}`);
+        uploadBytes(imageRef, url).then(() => {
+            getDownloadURL(imageRef).then(url => {
+                state.questions[index].image_url = url;
+                setState(prev => ({...prev}));
+            });
+        });
     };
 
     // handle change answer label
@@ -130,8 +141,14 @@ const Form = () => {
     const handleImageAnwer = (url, id, value) => {
         const index = state.questions.findIndex(item => item._id === id);
         const indexAnswer = state.questions[index].answer.findIndex(item => item.value === value);
-        state.questions[index].answer[indexAnswer].img_url = url;
-        setState(prev => ({...prev}));
+
+        const imageRef = ref(storage, `images/${url.uid}`);
+        uploadBytes(imageRef, url).then((snapshot) => {
+            getDownloadURL(imageRef).then((url) => {
+                state.questions[index].answer[indexAnswer].img_url = url;
+                setState(prev => ({...prev}));
+            });
+        })
     };
 
     // handle delete answer image
@@ -194,6 +211,30 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    const handleSend = async (type) => {
+        const rs = {
+            _id: uuidv4(),
+            formTitle: state.formTitle,
+            formDescription: state.formDescription,
+            questions: state.questions,
+            mordified_at: new Date().toLocaleString(),
+        };
+
+        state.isVisibleModalSend = !state.isVisibleModalSend;
+        setState(prev => ({...prev}));
+
+        if(type === 'save') {
+            try {
+                const docRef = doc(collection(fireStore, 'forms'), rs._id);
+                await setDoc(docRef, rs);
+                message.success('Save form successfully', 3);
+            } catch (error) {
+                console.log(error);
+            };
+        };
+
+    };
+
     const tabContent = [
         {
             label: 'Questions',
@@ -236,7 +277,9 @@ const Form = () => {
     return (
         <div className="w-screen h-screen flex flex-col">
             <div className="h-16 min-h-16 max-h-16 w-full">
-                <FormHeader />
+                <FormHeader
+                    handleSend={handleSend}
+                />
             </div>
             <div className="flex-grow w-full overflow-y-auto">
                 <Tabs
@@ -256,6 +299,25 @@ const Form = () => {
                     })}
                 />
             </div>
+            <Modal
+                open={state.isVisibleModalSend}
+                onCancel={() => handleSend('copy')}
+                onOk={handleSend}
+                okText="Copy"
+                cancelText="Cancel"
+                okButtonProps={{className: 'bg-[rgb(103,58,183)]'}}
+                title="Send form"
+                className="send-form"
+            >
+                <div className="font-medium text-base pt-5">Link</div>
+                <div className="w-full">
+                    <input
+                        disabled
+                        value={'https://forms.gle/opp8xsTJj9wLgMXu6'}
+                        className="w-full border-b outline-none py-2"
+                    />
+                </div>
+            </Modal>
         </div>
     );
 };

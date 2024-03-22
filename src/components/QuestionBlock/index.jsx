@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { Upload, Select, Switch, Tooltip } from 'antd';
+import { Upload, Select, Switch, Tooltip, Spin } from 'antd';
 
 import Paragraph from "@components/Paragraph";
 import MultipleChoice from "@components/MultipleChoice";
@@ -19,6 +19,10 @@ const QuestionBlock = (props) => {
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, handleRequire, handleUploadQuestionImage, handleRemoveAnswer } = props;
     const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer, handleRemoveBlock, handleCopyBlock } = props;
     const { handleRemoveQuestionImage } = props;
+
+    const [state, setState] = useState({
+        isLoading: true,
+    });
 
     const typeAnswers = [
         {
@@ -65,7 +69,7 @@ const QuestionBlock = (props) => {
     const onUploadChange = async (event) => {
         const file = event.file;
         const url = await getBase64(file.originFileObj);
-        handleUploadQuestionImage(url, question._id);
+        handleUploadQuestionImage(file.originFileObj, question._id);
     };
 
     const renderAnswer = () => {
@@ -121,6 +125,12 @@ const QuestionBlock = (props) => {
         };
     };
 
+    const onLoad = (e) => {
+        console.log('running', e);
+        state.isLoading = false;
+        setState(prev => ({...prev}));
+    };
+
     return (
         <div
             id={question._id}
@@ -156,12 +166,16 @@ const QuestionBlock = (props) => {
             </div>
             {question?.image_url?.length > 0 && (
                 <div className="relative">
+                    {state.isLoading && (
+                        <Spin tip="Loading..." size="small"/>
+                    )}
                     <img
                         alt="image"
                         style={{
                             width: '100%',
                         }}
                         src={question.image_url}
+                        onLoad={onLoad}
                     />
                     <div className="absolute -top-5 -right-5">
                         <IconTrash

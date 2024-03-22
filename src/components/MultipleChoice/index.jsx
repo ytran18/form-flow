@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Radio, Space, Upload } from 'antd';
+import { Radio, Space, Upload, Spin } from 'antd';
 
 import IconImage from '@icon/iconImage.svg';
 import IconTrash from '@icon/iconTrash.svg';
@@ -15,6 +15,7 @@ const MultipleChoice = (props) => {
 
     const [state, setState] = useState({
         activeValue: 1,
+        loading: true,
     });
 
     const getBase64 = (file) => new Promise((resolve, reject) => {
@@ -26,8 +27,9 @@ const MultipleChoice = (props) => {
 
     const onUploadChange = async (event, value) => {
         const file = event.file;
+        console.log(file);
         const url = await getBase64(file.originFileObj);
-        handleImageAnwer(url, questionId, value);
+        handleImageAnwer(file.originFileObj, questionId, value);
     };
 
     const handleInputClick = (label, value) => {
@@ -45,7 +47,7 @@ const MultipleChoice = (props) => {
             <Radio.Group className="w-full" size="large" value={null}>
                 <Space className="w-full" direction="vertical">
                     {answer.length > 0 && answer.map((item, index) => (
-                        <div className="w-full flex justify-center flex-col gap-5">
+                        <div className="w-full flex justify-center flex-col gap-5" key={`answer-${index}`}>
                             <Radio size="large" className="flex items-center" key={index} value={item.value}>
                                 <input
                                     type="text"
@@ -76,12 +78,16 @@ const MultipleChoice = (props) => {
                             </Radio>
                             {item.img_url.length > 0 && (
                                 <div className="relative">
+                                    {state.loading && (
+                                        <Spin tip="Loading..." size="small"/>
+                                    )}
                                     <img
                                         alt="image"
                                         style={{
                                             width: '100%',
                                         }}
                                         src={item.img_url}
+                                        onLoad={() => setState(prev => ({...prev, loading: false}))}
                                     />
                                     <div className="absolute top-0 -right-6">
                                         <IconTrash
