@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Radio, Space, Upload } from 'antd';
 
@@ -8,35 +8,14 @@ import IconClose from '@icon/iconClose.svg';
 
 import './style.css';
 
-const MultipleChoice = () => {
+const MultipleChoice = (props) => {
+
+    const { answer, questionId } = props;
+    const { handleRemoveAnswer, handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer } = props;
 
     const [state, setState] = useState({
-        answer: [],
         activeValue: 1,
     });
-
-    useEffect(() => {
-        const defaultValue = [
-            {
-                value: 1,
-                label: 'Option 1',
-                img_url: '',
-            },
-            {
-                value: 2,
-                label: 'Add option',
-                img_url: '',
-            },
-        ];
-        state.answer = defaultValue;
-        setState(prev => ({...prev}));
-    },[]);
-
-    const handleChangeInput = (e, value) => {
-        const index = state.answer.findIndex(item => item.value === value);
-        state.answer[index].label = e.target.value;
-        setState(prev => ({...prev}));
-    };
 
     const getBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -48,15 +27,7 @@ const MultipleChoice = () => {
     const onUploadChange = async (event, value) => {
         const file = event.file;
         const url = await getBase64(file.originFileObj);
-        const index = state.answer.findIndex(item => item.value === value);
-        state.answer[index].img_url = url;
-        setState(prev => ({...prev}));
-    };
-
-    const handleDeleteImage = (value) => {
-        const index = state.answer.findIndex(item => item.value === value);
-        state.answer[index].img_url = '';
-        setState(prev => ({...prev}));
+        handleImageAnwer(url, questionId, value);
     };
 
     const handleInputClick = (label, value) => {
@@ -66,30 +37,14 @@ const MultipleChoice = () => {
             return;
         };
 
-        const { answer } = state;
-
-        const newAnswer = {
-            value: answer.length,
-            label: `Option ${answer.length}`,
-            img_url: '',
-        };
-        
-        answer.splice(answer.length - 1, 0, newAnswer);
-        state.answer = answer;
-        setState(prev => ({...prev}));
-    };
-
-    const handleRemoveAnswer = (value) => {
-        const index = state.answer.findIndex(item => item.value === value);
-        state.answer.splice(index, 1);
-        setState(prev => ({...prev}));
+        handleInputClickAnswer(value, questionId);
     };
 
     return (
         <div className="w-full">
             <Radio.Group className="w-full" size="large" value={null}>
                 <Space className="w-full" direction="vertical">
-                    {state.answer.length > 0 && state.answer.map((item, index) => (
+                    {answer.length > 0 && answer.map((item, index) => (
                         <div className="w-full flex justify-center flex-col gap-5">
                             <Radio size="large" className="flex items-center" key={index} value={item.value}>
                                 <input
@@ -97,8 +52,8 @@ const MultipleChoice = () => {
                                     onClick={() => handleInputClick(item.label, item.value)}
                                     defaultValue={item.label !== 'Add option' ? item.label : ''}
                                     placeholder={item.label === 'Add option' ? 'Add option' : ''}
-                                    value={item.label !== 'Add option' ? state.answer[index].label : ''}
-                                    onChange={(e) => handleChangeInput(e, item.value)}
+                                    value={item.label !== 'Add option' ? answer[index].label : ''}
+                                    onChange={(e) => handleChangeAnswerIndex(e, item.value, questionId)}
                                     className={`outline-none w-full py-2 ${item.label === 'Add option' ? 'opacity-55' : ''}`}
                                 />
                                 {(item.label !== 'Add option' && state.activeValue === item.value) && (
@@ -115,7 +70,7 @@ const MultipleChoice = () => {
                                 {item.label !== 'Add option' && (
                                     <IconClose
                                         className="scale-125 cursor-pointer"
-                                        onClick={() => handleRemoveAnswer(item.value)}
+                                        onClick={() => handleRemoveAnswer(item.value, questionId)}
                                     />
                                 )}
                             </Radio>
@@ -131,7 +86,7 @@ const MultipleChoice = () => {
                                     <div className="absolute top-0 -right-6">
                                         <IconTrash
                                             className="text-red-400 cursor-pointer"
-                                            onClick={() => handleDeleteImage(item.value)}
+                                            onClick={() => handleDeleteImageAnswer(item.value, questionId)}
                                         />
                                     </div>
                                 </div>

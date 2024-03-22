@@ -1,23 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Upload, Select, Switch } from 'antd';
 
 import Paragraph from "@components/Paragraph";
-import Choice from "@components/Choice";
 import MultipleChoice from "@components/MultipleChoice";
 import Dropdown from "@components/Dropdown";
 
 import IconImage from '@icon/iconImage.svg';
 import IconTrash from '@icon/iconTrash.svg';
 import IconCopy from '@icon/iconCopy.svg';
+import IconPlus from '@icon/iconPlus.svg';
 
 import './style.css';
 
-const QuestionBlock = () => {
+const QuestionBlock = (props) => {
+
+    const { question, isRequire } = props;
+    const { handleAddBlock, onChangeQuestionTitle, handleChangeType, handleRequire, handleUploadQuestionImage, handleRemoveAnswer } = props;
+    const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer } = props;
 
     const [state, setState] = useState({
         img_url: '',
-        typeAnswer: '',
         isRequire: false,
     });
 
@@ -40,6 +43,13 @@ const QuestionBlock = () => {
         },  
     ];
 
+    useEffect(() => {
+        const element = document.getElementById(question._id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+    },[question._id]);
+
     const getBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -59,32 +69,67 @@ const QuestionBlock = () => {
     const onUploadChange = async (event) => {
         const file = event.file;
         const url = await getBase64(file.originFileObj);
+        handleUploadQuestionImage(url, question._id);
         state.img_url = url;
         setState(prev => ({...prev}));
     };
 
     const renderAnswer = () => {
-        switch (state.typeAnswer) {
+        switch (question.type_answer) {
             case 'paragraph':
                 return <Paragraph />;
             case 'multiple-choice':
-                return <MultipleChoice />;
+                return (
+                    <MultipleChoice
+                        questionId={question._id}
+                        answer={question.answer}
+                        handleRemoveAnswer={handleRemoveAnswer}
+                        handleChangeAnswerIndex={handleChangeAnswerIndex}
+                        handleImageAnwer={handleImageAnwer}
+                        handleDeleteImageAnswer={handleDeleteImageAnswer}
+                        handleInputClickAnswer={handleInputClickAnswer}
+                    />
+                );
             case 'choice':
-                return <MultipleChoice />;
+                return (
+                    <MultipleChoice
+                        questionId={question._id}
+                        answer={question.answer}
+                        handleRemoveAnswer={handleRemoveAnswer}
+                        handleChangeAnswerIndex={handleChangeAnswerIndex}
+                        handleImageAnwer={handleImageAnwer}
+                        handleDeleteImageAnswer={handleDeleteImageAnswer}
+                        handleInputClickAnswer={handleInputClickAnswer}
+                    />
+                );
             case 'dropdown':
                 return <Dropdown />;
             default:
-                return <MultipleChoice />;
+                return (
+                    <MultipleChoice
+                        questionId={question._id}
+                        answer={question.answer}
+                        handleRemoveAnswer={handleRemoveAnswer}
+                        handleChangeAnswerIndex={handleChangeAnswerIndex}
+                        handleImageAnwer={handleImageAnwer}
+                        handleDeleteImageAnswer={handleDeleteImageAnswer}
+                        handleInputClickAnswer={handleInputClickAnswer}
+                    />
+                );
         };
     };
 
     return (
-        <div className="bg-white w-full min-h-fit max-h-fit rounded-lg border-[1px] flex flex-col px-8 py-4 gap-5">
+        <div
+            id={question._id}
+            className="bg-white w-full min-h-fit max-h-fit rounded-lg border-[1px] flex flex-col px-8 py-4 gap-5"
+        >
             <div className="w-full flex gap-10">
                 <textarea
                     onInput={onInput}
                     placeholder="Question"
                     className="w-[400px] tracking-wide min-h-[57px] max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
+                    onChange={(e) => onChangeQuestionTitle(e, question._id)}
                 />
                 <div className="flex">
                     <Upload
@@ -99,7 +144,8 @@ const QuestionBlock = () => {
                 <div className="flex-grow">
                     <Select
                         className="w-full"
-                        onChange={(value) => setState(prev => ({...prev, typeAnswer: value}))}
+                        value={question.type_answer}
+                        onChange={(value) => handleChangeType(value, question._id)}
                         defaultValue={typeAnswers[2].value}
                         options={typeAnswers}
                     />
@@ -126,15 +172,19 @@ const QuestionBlock = () => {
                 {renderAnswer()}
             </div>
             <div className="w-full flex items-center py-2 justify-end gap-5">
-                <IconCopy />
-                <IconTrash />
+                <IconCopy className="cursor-pointer"/>
+                <IconTrash className="cursor-pointer"/>
+                <IconPlus
+                    className="cursor-pointer scale-75"
+                    onClick={() => handleAddBlock(question._id)}
+                />
                 <div className="h-8 w-[1px] bg-[rgb(218,220,224)]"></div>
                 <div className="flex items-center gap-2">
                     Require
                     <Switch
-                        value={state.isRequire}
+                        value={isRequire}
                         className="bg-[rgb(140,140,140)]"
-                        onChange={(value) => setState(prev => ({...prev, isRequire: value}))}
+                        onChange={handleRequire}
                     />
                 </div>
             </div>
