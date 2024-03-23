@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 
 import { Tabs, Modal, message } from 'antd';
 
+import { useNavigate } from "react-router-dom";
+
 import { v4 as uuidv4 } from "uuid";
+
+import { useFormPackageHook } from "@core/redux/hooks";
 
 import { fireStore, storage } from '@core/firebase/firebase';
 import { doc, collection, setDoc } from 'firebase/firestore';
@@ -23,6 +27,9 @@ const Form = () => {
         questions: [],
         isVisibleModalSend: false,
     });
+
+    const navigate = useNavigate();
+    const form = useFormPackageHook();
 
     // init question
     useEffect(() => {
@@ -235,6 +242,10 @@ const Form = () => {
 
     };
 
+    const handleNavigate = () => {
+        navigate({pathname:'/'});
+    };
+
     const tabContent = [
         {
             label: 'Questions',
@@ -279,6 +290,7 @@ const Form = () => {
             <div className="h-16 min-h-16 max-h-16 w-full">
                 <FormHeader
                     handleSend={handleSend}
+                    handleNavigate={handleNavigate}
                 />
             </div>
             <div className="flex-grow w-full overflow-y-auto">

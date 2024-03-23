@@ -8,11 +8,14 @@ import IconTrash from '@icon/iconTrash.svg';
 
 const FormHeader = (props) => {
 
-    const { handleSend } = props;
+    const { handleSend, handleNavigate } = props;
 
     return(
         <div className="w-full h-full flex items-center justify-between px-8 ml:px-20">
-            <div className="flex items-center gap-3">
+            <div
+                className="flex items-center gap-3"
+                onClick={handleNavigate}
+            >
                 <IconForm className="cursor-pointer"/>
                 <div className="font-semibold text-xl">Untitled forms</div>
             </div>

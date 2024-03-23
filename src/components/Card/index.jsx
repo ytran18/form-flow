@@ -8,7 +8,9 @@ import IconTitle from '@icon/iconTitle.svg';
 import IconTrash from '@icon/iconTrash.svg';
 import IconNewTab from '@icon/iconNewTab.svg';
 
-const Card = () => {
+const Card = (props) => {
+
+    const { data, handleNavigateForm } = props;
 
     const [state, setState] = useState({
         isOpenContextMenu: false,
@@ -65,14 +67,18 @@ const Card = () => {
             menu={{items: contextMenu}}
             trigger={['contextMenu']}
         >
-            <div className="w-[210px] h-[246px] form-card border cursor-pointer rounded-md hover:border-[rgb(196,152,232)] flex flex-col">
+            <div
+                className="w-[210px] h-[246px] form-card border cursor-pointer rounded-md hover:border-[rgb(196,152,232)] flex flex-col"
+                onClick={() => handleNavigateForm(data?._id)}
+            >
                 <div className="w-full h-[169px] border-b"></div>
                 <div className="flex flex-col w-full p-3">
-                    <div className="font-medium text-sm">Mẫu không có tiêu đề</div>
+                    <div className="font-medium text-sm">{data?.formTitle || 'Untitled form'}</div>
                     <div className="w-full flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                             <IconForm className="transform scale-75"/>
-                            <div className="text-xs">Opened 5:14 PM</div>
+                            {/* <div className="text-xs">Opened 5:14 PM</div> */}
+                            <div className="text-[11px]">{data?.mordified_at}</div>
                         </div>
                         <div className="p-1 hover:bg-[rgb(218,220,224)] rounded-full">
                             <Popover
