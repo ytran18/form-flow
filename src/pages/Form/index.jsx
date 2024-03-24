@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { formPackage } from '@core/redux/actions';
 
 import { fireStore, storage } from '@core/firebase/firebase';
-import { doc, collection, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import FormHeader from "@components/FormHeader";
