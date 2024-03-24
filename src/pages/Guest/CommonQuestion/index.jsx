@@ -2,6 +2,9 @@ import React, { useState } from "react";
 
 import { DatePicker, Button, message } from 'antd';
 
+import { useDispatch } from "react-redux";
+import { assigneePackage } from "@core/redux/actions";
+
 const CommonQuestion = (props) => {
 
     const { handleNextStep } = props;
@@ -10,7 +13,10 @@ const CommonQuestion = (props) => {
         name:  '',
         birthday: '',
         cccd: '',
+        company: ''
     });
+
+    const dispatch = useDispatch();
 
     const onChangeBirthday = (date, dateString) => {
         state.birthday = dateString;
@@ -18,7 +24,7 @@ const CommonQuestion = (props) => {
     };
 
     const handleNext = () => {
-        if (!state.name || !state.birthday || !state.cccd) {
+        if (!state.name || !state.birthday || !state.cccd || !state.company) {
             message.error('Hãy nhập đầy đủ thông tin!', 3);
             return;
         };
@@ -27,14 +33,16 @@ const CommonQuestion = (props) => {
             name: state.name,
             birthday: state.birthday,
             cccd: state.cccd,
+            company: state.company,
         };
 
+        dispatch(assigneePackage(rs));
         handleNextStep(rs);
     };
 
     return (
         <div className="w-full flex flex-col gap-5">
-            <div className="bg-white rounded-lg p-3 min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
+            <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Họ tên: <span className="text-red-500">*</span></div>
                     <div className="w-full border-b border-solid border-[rgb(219,219,219)]">
@@ -49,7 +57,7 @@ const CommonQuestion = (props) => {
                 <div className="px-5">
                 </div>
             </div>
-            <div className="bg-white rounded-lg p-3 min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
+            <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Ngày sinh: <span className="text-red-500">*</span></div>
                     <div className="w-auto">
@@ -59,7 +67,7 @@ const CommonQuestion = (props) => {
                     </div>
                 </div>
             </div>
-            <div className="bg-white rounded-lg p-3 min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
+            <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Căn cước công dân: <span className="text-red-500">*</span></div>
                     <div className="w-full border-b border-solid border-[rgb(219,219,219)]">
@@ -67,6 +75,21 @@ const CommonQuestion = (props) => {
                             type="number"
                             value={state.cccd}
                             onChange={(e) => setState(prev => ({...prev, cccd: e?.target?.value}))}
+                            className="outline-none py-2 w-full"
+                        />
+                    </div>
+                </div>
+                <div className="px-5">
+                </div>
+            </div>
+            <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
+                <div className="px-5 flex flex-col gap-5">
+                    <div className="font-medium">Công ty: <span className="text-red-500">*</span></div>
+                    <div className="w-full border-b border-solid border-[rgb(219,219,219)]">
+                        <input
+                            type="text"
+                            value={state.company}
+                            onChange={(e) => setState(prev => ({...prev, company: e?.target?.value}))}
                             className="outline-none py-2 w-full"
                         />
                     </div>

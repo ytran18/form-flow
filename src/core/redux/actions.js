@@ -1,4 +1,4 @@
-import { USER_LOGIN, CLEAR, FORM_SELECTED } from './constants';
+import { USER_LOGIN, CLEAR, FORM_SELECTED, ASSIGNEE_USER } from './constants';
 
 export const userPackage = (user) => ({
     type: USER_LOGIN,
@@ -8,6 +8,11 @@ export const userPackage = (user) => ({
 export const formPackage = (form) => ({
     type: FORM_SELECTED,
     payload: form,
+});
+
+export const assigneePackage = (assignee) => ({
+    type: ASSIGNEE_USER,
+    payload: assignee,
 });
 
 // remove all state of a reducer

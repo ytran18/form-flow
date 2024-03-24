@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import { fireStore } from "@core/firebase/firebase";
 import { doc, getDoc } from 'firebase/firestore';
 
+import { useAssigneePackageHook } from "@core/redux/hooks";
+
 import { Spin } from 'antd';
 
 import GuestHeader from "./GuestHeader";
@@ -21,6 +23,8 @@ const Guest = () => {
         isLoading: true,
     });
 
+    const assignee = useAssigneePackageHook();
+
     useEffect(() => {
         if (param.formId) {
             const docRef = doc(fireStore, 'forms', param.formId);
@@ -28,7 +32,8 @@ const Guest = () => {
                 let form = {};
                 if (snapshot.data()) form = snapshot.data();
                 state.form = form;
-                state.isLoading = false,
+                state.isLoading = false;
+                if (Object.keys(assignee).length > 0) state.activeTab = 1;
                 setState(prev => ({...prev}));
             });
         };
@@ -50,14 +55,15 @@ const Guest = () => {
             case 1: 
                 return (
                     <Assignment
-
+                        form={state.form}
+                        infoQuestion={assignee}
                     />
                 );
         };
     };
 
     return (
-        <div className="w-screen h-screen gap-5 px-80 py-3 bg-[rgb(240,235,248)] flex flex-col items-center">
+        <div className="w-screen h-screen overflow-y-auto gap-5 px-80 py-3 bg-[rgb(240,235,248)] flex flex-col items-center">
             <div className="w-full">
                 <GuestHeader
                     form={state.form}

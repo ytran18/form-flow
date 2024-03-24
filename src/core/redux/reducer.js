@@ -1,4 +1,4 @@
-import { CLEAR, USER_LOGIN, FORM_SELECTED } from "./constants";
+import { CLEAR, USER_LOGIN, FORM_SELECTED, ASSIGNEE_USER } from "./constants";
 
 
 const userState = {
@@ -7,6 +7,10 @@ const userState = {
 
 const formState = {
     form: {},
+};
+
+const assigneeState = {
+    assignee: {},
 };
 
 export const userReducer = (state = userState, action) =>
@@ -36,6 +40,23 @@ export const formReducer = (state = formState, action) =>
         case CLEAR:{
             return {
                 form: {}
+            }
+        }
+        default:
+            return state
+    };
+};
+
+export const assigneeReducer = (state = assigneeState, action) =>
+{
+    switch (action.type)
+    {
+        case ASSIGNEE_USER:{
+            return { ...state, assignee: action.payload }
+        }
+        case CLEAR:{
+            return {
+                assignee: {}
             }
         }
         default:
