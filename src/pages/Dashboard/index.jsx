@@ -8,6 +8,8 @@ import { formPackage } from '@core/redux/actions';
 import { useDispatch } from "react-redux";
 import { clear } from "@core/redux/actions";
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { fireStore } from "@core/firebase/firebase";
 import { collection, getDocs } from 'firebase/firestore';
 
@@ -26,6 +28,10 @@ const Dashboard = () => {
         forms: [],
         isLoading: true,
     });
+
+    useEffect(() => {
+        dispatch(formPackage({}))
+    },[])
 
     const options = [
         {
@@ -86,13 +92,23 @@ const Dashboard = () => {
     };
 
     const handleCreateNewForm = () => {
-        navigate({pathname:'/form'});
+        navigate(
+            `/form/${uuidv4()}`,
+            {
+                state: 'new',
+            }
+        );
     };
 
     const handleNavigateForm = (id) => {
         const selectedForm = state.forms.find(element => element._id === id);
         dispatch(formPackage(selectedForm));
-        navigate({pathname:'/form'});
+        navigate(
+            `/form/${selectedForm._id}`,
+            {
+                state: 'edit',
+            }
+        );
     };
 
     return (
@@ -127,7 +143,7 @@ const Dashboard = () => {
                         <Empty />
                     </div>
                 )}
-                <div className="flex flex-wrap justify-between gap-5 pb-4">
+                <div className="flex flex-wrap justify-center gap-5 pb-4">
                     {state.forms.length > 0 && state.forms.map((item, index) => {
                         return (
                             <div key={`forms-${index}`}>

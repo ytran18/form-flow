@@ -8,7 +8,7 @@ import IconTrash from '@icon/iconTrash.svg';
 
 const FormHeader = (props) => {
 
-    const { handleSend, handleNavigate } = props;
+    const { handleSend, handleNavigate, handleSave } = props;
 
     return(
         <div className="w-full h-full flex items-center justify-between px-8 ml:px-20">
@@ -19,7 +19,7 @@ const FormHeader = (props) => {
                 <IconForm className="cursor-pointer"/>
                 <div className="font-semibold text-xl">Untitled forms</div>
             </div>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-4">
                 <Tooltip
                     placement="bottom"
                     title="Preivew"
@@ -29,14 +29,6 @@ const FormHeader = (props) => {
                     <IconEye className="cursor-pointer" />
                 </Tooltip>
 
-                <Button
-                    type="primary"
-                    className="bg-[rgb(103,58,183)]"
-                    onClick={() => handleSend('save')}
-                >
-                    Send
-                </Button>
-
                 <Tooltip
                     placement="bottom"
                     title="Delete"
@@ -45,6 +37,22 @@ const FormHeader = (props) => {
                 >
                     <IconTrash className="cursor-pointer" />
                 </Tooltip>
+
+                <Button
+                    type="primary"
+                    className="bg-[rgb(103,58,183)]"
+                    onClick={handleSave}
+                >
+                    Save
+                </Button>
+
+                <Button
+                    type="primary"
+                    className="bg-[rgb(103,58,183)]"
+                    onClick={handleSend}
+                >
+                    Send
+                </Button>
 
             </div>
         </div>

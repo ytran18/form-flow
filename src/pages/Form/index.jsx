@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 
 import { Tabs, Modal, message } from 'antd';
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import { v4 as uuidv4 } from "uuid";
 
 import { useFormPackageHook } from "@core/redux/hooks";
+import { useDispatch } from "react-redux";
+import { formPackage } from '@core/redux/actions';
 
 import { fireStore, storage } from '@core/firebase/firebase';
-import { doc, collection, setDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import FormHeader from "@components/FormHeader";
@@ -29,7 +31,21 @@ const Form = () => {
     });
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const location = useLocation();
     const form = useFormPackageHook();
+    const param = useParams();
+
+
+    useEffect(() => {
+        if (Object.keys(form).length > 0) {
+            state.formTitle = form.formTitle;
+            state.formDescription = form.formDescription;
+            state.questions = form.questions;
+
+            setState(prev => ({...prev}));
+        }
+    },[form]);
 
     // init question
     useEffect(() => {
@@ -218,31 +234,47 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
-    const handleSend = async (type) => {
+    const handleSend = (type) => {
+        if (type === 'copy') {
+            const link = `http://localhost:5000/guest/${form?._id}`;
+            navigator.clipboard.writeText(link).then(() => {
+                message.success("Copy successfully!")
+            })
+        };
+
+        state.isVisibleModalSend = !state.isVisibleModalSend;
+        setState(prev => ({...prev}));
+    };
+
+    const handleSave = async () => {
         const rs = {
-            _id: uuidv4(),
+            _id: location.state === 'new' ? param.formId : form?._id,
             formTitle: state.formTitle,
             formDescription: state.formDescription,
             questions: state.questions,
             mordified_at: new Date().toLocaleString(),
         };
 
-        state.isVisibleModalSend = !state.isVisibleModalSend;
-        setState(prev => ({...prev}));
+        try {
+            const docRef = doc(collection(fireStore, 'forms'), rs._id);
+            const updateRef = doc(fireStore, 'forms', rs._id);
 
-        if(type === 'save') {
-            try {
-                const docRef = doc(collection(fireStore, 'forms'), rs._id);
+            if (location.state === 'new') {
                 await setDoc(docRef, rs);
-                message.success('Save form successfully', 3);
-            } catch (error) {
-                console.log(error);
+            } else {
+                await updateDoc(updateRef, rs);
             };
+
+            message.success('Save form successfully', 3);
+            dispatch(formPackage(rs));
+        } catch (error) {
+            console.log(error);
         };
 
     };
 
     const handleNavigate = () => {
+        dispatch(formPackage({}));
         navigate({pathname:'/'});
     };
 
@@ -290,6 +322,7 @@ const Form = () => {
             <div className="h-16 min-h-16 max-h-16 w-full">
                 <FormHeader
                     handleSend={handleSend}
+                    handleSave={handleSave}
                     handleNavigate={handleNavigate}
                 />
             </div>
@@ -313,8 +346,8 @@ const Form = () => {
             </div>
             <Modal
                 open={state.isVisibleModalSend}
-                onCancel={() => handleSend('copy')}
-                onOk={handleSend}
+                onCancel={handleSend}
+                onOk={() => handleSend('copy')}
                 okText="Copy"
                 cancelText="Cancel"
                 okButtonProps={{className: 'bg-[rgb(103,58,183)]'}}
@@ -325,7 +358,7 @@ const Form = () => {
                 <div className="w-full">
                     <input
                         disabled
-                        value={'https://forms.gle/opp8xsTJj9wLgMXu6'}
+                        value={`http://localhost:5000/guest/${form?._id}`}
                         className="w-full border-b outline-none py-2"
                     />
                 </div>

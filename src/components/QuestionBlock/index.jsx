@@ -126,7 +126,6 @@ const QuestionBlock = (props) => {
     };
 
     const onLoad = (e) => {
-        console.log('running', e);
         state.isLoading = false;
         setState(prev => ({...prev}));
     };

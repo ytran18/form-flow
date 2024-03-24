@@ -57,7 +57,6 @@ const Card = (props) => {
     };
     
     const handleOpenInNewTab = () => {
-        console.log('open in new tab');
         state.isOpenContextMenu = false,
         setState(prev => ({...prev}));
     };
@@ -73,7 +72,7 @@ const Card = (props) => {
             >
                 <div className="w-full h-[169px] border-b"></div>
                 <div className="flex flex-col w-full p-3">
-                    <div className="font-medium text-sm">{data?.formTitle || 'Untitled form'}</div>
+                    <div className="font-medium text-sm truncate">{data?.formTitle || 'Untitled form'}</div>
                     <div className="w-full flex items-center justify-between">
                         <div className="flex items-center gap-1">
                             <IconForm className="transform scale-75"/>
