@@ -90,7 +90,11 @@ const Card = (props) => {
                 className="w-[210px] h-[246px] form-card border cursor-pointer rounded-md hover:border-[rgb(196,152,232)] flex flex-col"
                 onClick={(e) => handleNavigateForm(e, data?._id)}
             >
-                <div className="w-full h-[169px] border-b"></div>
+                <div className="w-full h-[169px] border-b">
+                    {data?.preview_img?.length > 0 && (
+                        <img src={data?.preview_img} className="w-full h-full"/>
+                    )}
+                </div>
                 <div className="flex flex-col w-full p-3">
                     <div className="font-medium text-sm truncate">{data?.formTitle || 'Untitled form'}</div>
                     <div className="w-full flex items-center justify-between">

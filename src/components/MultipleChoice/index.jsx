@@ -27,7 +27,6 @@ const MultipleChoice = (props) => {
 
     const onUploadChange = async (event, value) => {
         const file = event.file;
-        console.log(file);
         const url = await getBase64(file.originFileObj);
         handleImageAnwer(file.originFileObj, questionId, value);
     };

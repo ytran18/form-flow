@@ -23,7 +23,7 @@ const Questions = (props) => {
     };
 
     return (
-        <div className="w-full h-full flex flex-col gap-5">
+        <div id="preview-img" className="w-full h-full flex flex-col gap-5">
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="w-full h-[10px] bg-[rgb(103,58,183)] rounded-tl-lg rounded-tr-lg"></div>
                 <div className="px-5">

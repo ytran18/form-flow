@@ -6,6 +6,8 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 import { v4 as uuidv4 } from "uuid";
 
+import html2canvas from 'html2canvas';
+
 import { useFormPackageHook } from "@core/redux/hooks";
 import { useDispatch } from "react-redux";
 import { formPackage } from '@core/redux/actions';
@@ -259,6 +261,18 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    const handleGetBlob = async () => {
+        const divElement = document.getElementById('preview-img');
+
+        const canvas = await html2canvas(divElement);
+
+        return new Promise(resolve => {
+            canvas.toBlob(function(blob) {
+                resolve(blob);
+            });
+        });
+    };
+
     const handleSave = async () => {
         const questions = [...state.questions];
         questions.map((item) => {
@@ -270,16 +284,24 @@ const Form = () => {
             };
             return item;
         });
-
-        const rs = {
-            _id: location.state === 'new' ? param.formId : form?._id,
-            formTitle: state.formTitle,
-            formDescription: state.formDescription,
-            questions: questions,
-            mordified_at: new Date().toLocaleString(),
-        };
-
+        
+        
         try {
+            let previewURL = '';
+            const blob = await handleGetBlob();
+            const imageRef = ref(storage, `images/${uuidv4()}`);
+            const snapshot = await uploadBytes(imageRef, blob);
+            previewURL = await getDownloadURL(imageRef);
+
+            const rs = {
+                _id: location.state === 'new' ? param.formId : form?._id,
+                formTitle: state.formTitle,
+                formDescription: state.formDescription,
+                questions: questions,
+                mordified_at: new Date().toLocaleString(),
+                preview_img: previewURL,
+            };
+
             const docRef = doc(collection(fireStore, 'forms'), rs._id);
             const updateRef = doc(fireStore, 'forms', rs._id);
 
