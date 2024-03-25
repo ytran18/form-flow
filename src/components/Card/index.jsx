@@ -88,7 +88,7 @@ const Card = (props) => {
         >
             <div
                 className="w-[210px] h-[246px] form-card border cursor-pointer rounded-md hover:border-[rgb(196,152,232)] flex flex-col"
-                onClick={() => handleNavigateForm(data?._id)}
+                onClick={(e) => handleNavigateForm(e, data?._id)}
             >
                 <div className="w-full h-[169px] border-b"></div>
                 <div className="flex flex-col w-full p-3">
@@ -99,9 +99,10 @@ const Card = (props) => {
                             {/* <div className="text-xs">Opened 5:14 PM</div> */}
                             <div className="text-[11px]">{data?.mordified_at}</div>
                         </div>
-                        <div className="p-1 hover:bg-[rgb(218,220,224)] rounded-full">
+                        <div id="context-memu-icon" className="p-1 hover:bg-[rgb(218,220,224)] rounded-full">
                             <Popover
                                 trigger={"click"}
+                                id="context-menu-popover"
                                 open={state.isOpenContextMenu}
                                 onOpenChange={onOpenChange}
                                 placement="bottom"

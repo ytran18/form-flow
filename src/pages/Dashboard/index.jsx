@@ -82,7 +82,13 @@ const Dashboard = () => {
         );
     };
 
-    const handleNavigateForm = (id) => {
+    const handleNavigateForm = (event, id) => {
+        const contextMenuIcon = document.getElementById('context-memu-icon');
+        const contextMenuPopover = document.getElementById('context-menu-popover');
+        const modal = document.getElementsByClassName('ant-modal-wrap');
+        if (contextMenuIcon?.contains(event?.target) || contextMenuPopover?.contains(event?.target) || modal?.[0]?.contains(event?.target)) {
+            return;
+        }
         const selectedForm = state.forms.find(element => element._id === id);
         dispatch(formPackage(selectedForm));
         navigate(
