@@ -31,6 +31,7 @@ const Form = () => {
         questions: [],
         isVisibleModalSend: false,
         isScroll: false,
+        isAvailable: true,
     });
 
     const navigate = useNavigate();
@@ -58,6 +59,7 @@ const Form = () => {
             state.formTitle = form.formTitle;
             state.formDescription = form.formDescription;
             state.questions = questions;
+            state.isAvailable = form?.isAvailable;
 
             setState(prev => ({...prev}));
         }
@@ -306,6 +308,7 @@ const Form = () => {
                 questions: updatedQuestions,
                 mordified_at: new Date().toLocaleString(),
                 preview_img: previewURL,
+                isAvailable: state.isAvailable,
             };
 
             const docRef = doc(collection(fireStore, 'forms'), rs._id);
@@ -328,6 +331,11 @@ const Form = () => {
     const handleNavigate = () => {
         dispatch(formPackage({}));
         navigate({pathname:'/'});
+    };
+
+    const onToggleChange = (checked) => {
+        state.isAvailable = checked;
+        setState(prev => ({...prev}));
     };
 
     const tabContent = [
@@ -361,7 +369,14 @@ const Form = () => {
         {
             label: 'Responses',
             key: '2',
-            children: <Responses form={form} formId={form?._id} />,
+            children: (
+                <Responses
+                    form={form}
+                    formId={form?._id}
+                    isAvailable={state.isAvailable}
+                    onToggleChange={onToggleChange}
+                />
+            )
         },
     ];
 

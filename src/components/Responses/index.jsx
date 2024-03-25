@@ -14,7 +14,7 @@ const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sh
 
 const Responses = (props) => {
 
-    const { formId, form } = props;
+    const { formId, form, isAvailable, onToggleChange } = props;
 
     const [state, setState] = useState({
         isToggle: true,
@@ -41,10 +41,10 @@ const Responses = (props) => {
         getData();
     },[]);
 
-    const onToggleChange = (checked) => {
-        state.isToggle = checked;
-        setState(prev => ({...prev}));
-    };
+    // const onToggleChange = (checked) => {
+    //     state.isToggle = checked;
+    //     setState(prev => ({...prev}));
+    // };
 
     const handleDownloadExcel = (answerId) => {
         const answer = state.answers.find(element => element._id === answerId);
@@ -119,12 +119,12 @@ const Responses = (props) => {
                         <div className="text-xs opacity-80 font-medium">Accepting responses</div>
                         <Switch
                             className="!bg-[rgb(140,140,140)]"
-                            checked={state.isToggle}
+                            checked={isAvailable}
                             onChange={onToggleChange}
                         />
                     </div>
                 </div>
-                <div className={`px-5 w-full text-sm ${state.isToggle ? 'text-green-500' : 'text-red-500'}`}>
+                <div className={`px-5 w-full text-sm ${isAvailable ? 'text-green-500' : 'text-red-500'}`}>
                     {state.isToggle ? 'This form is currently accepting responses' : 'This form is no longer accepting responses'}
                 </div>
             </div>

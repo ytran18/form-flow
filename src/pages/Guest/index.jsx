@@ -15,6 +15,7 @@ import GuestHeader from "./GuestHeader";
 import CommonQuestion from "./CommonQuestion";
 import Assignment from "./Assignment";
 import End from "./End";
+import NotAvailable from "./NotAvailable";
 
 const Guest = () => {
 
@@ -25,6 +26,7 @@ const Guest = () => {
         form: {},
         activeTab: 0,
         isLoading: true,
+        isAvailable: true,
     });
 
     const assignee = useAssigneePackageHook();
@@ -36,6 +38,7 @@ const Guest = () => {
                 let form = {};
                 if (snapshot.data()) form = snapshot.data();
                 state.form = form;
+                state.isAvailable = form?.isAvailable;
                 state.isLoading = false;
                 setState(prev => ({...prev}));
             });
@@ -80,21 +83,29 @@ const Guest = () => {
 
     return (
         <div className="w-screen h-screen overflow-y-auto gap-5 px-8 md:px-16 ml:px-32 lg:px-48 xl:px-80 py-3 bg-[rgb(240,235,248)] flex flex-col items-center">
-            {state.activeTab !== 2 && (
+            {state.isAvailable ? (
+                <>
+                    {(state.activeTab !== 2 && state.isAvailable) && (
+                        <div className="w-full">
+                            <GuestHeader
+                                form={state.form}
+                            />
+                        </div>
+                    )}
+                    {state.isLoading && (
+                        <div className="w-full flex items-center justify-center">
+                            <Spin />
+                        </div>
+                    )}
+                    {!state.isLoading && (
+                        <div className="w-full">
+                            {renderTab()}
+                        </div>
+                    )}
+                </>
+            ) : (
                 <div className="w-full">
-                    <GuestHeader
-                        form={state.form}
-                    />
-                </div>
-            )}
-            {state.isLoading && (
-                <div className="w-full flex items-center justify-center">
-                    <Spin />
-                </div>
-            )}
-            {!state.isLoading && (
-                <div className="w-full">
-                    {renderTab()}
+                    <NotAvailable formTitle={state.form?.formTitle}/>
                 </div>
             )}
         </div>
