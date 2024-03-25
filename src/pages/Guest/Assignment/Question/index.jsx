@@ -4,7 +4,7 @@ import { Radio, Select, Checkbox } from 'antd';
 
 const Question = (props) => {
 
-    const { question } = props;
+    const { question, handleAnswer } = props;
     const type_answer = question?.type_answer;
 
     const [state, setState] = useState({
@@ -15,6 +15,7 @@ const Question = (props) => {
         isChangeDropdown: false,
         multiple: [],
         isChangeMultiple: false,
+        textAnswer: '',
     });
 
     useEffect(() => {
@@ -35,19 +36,27 @@ const Question = (props) => {
     const onChangeChoice = (event) => {
         state.choice = event?.target?.value;
         state.isChangeChoice = true;
+        handleAnswer(question?._id, type_answer, event?.target?.value); // id of question, type of question and value of answer
         setState(prev => ({...prev}));
     };
 
     const onChangeDropdown = (event) => {
         state.isChangeDropdown = true;
         state.dropdown = event;
+        handleAnswer(question?._id, type_answer, event);
         setState(prev => ({...prev}));
     };
 
     const onChangeMultiple = (event) => {
         state.multiple = event;
         state.isChangeMultiple = true;
+        handleAnswer(question?._id, type_answer, event);
         setState(prev => ({...prev}));
+    };
+
+    const handleChangeTextAnswer = (event) => {
+        handleAnswer(question?._id, type_answer, event?.target?.value)
+        setState(prev => ({...prev, textAnswer: event?.target?.value}));
     };
 
     const onInput = (e) => {
@@ -64,6 +73,9 @@ const Question = (props) => {
             <div className="px-5 flex flex-col">
                 <div className="font-medium mb-5">
                     {question?.title || 'Untitled'}
+                    {question?.isRequire && (
+                        <span className="text-red-500">{` *`}</span>
+                    )}
                 </div>
                 {type_answer === 'choice' && (
                     <div className="w-full">
@@ -188,6 +200,8 @@ const Question = (props) => {
                     <div className="w-full">
                         <textarea
                             onInput={onInput}
+                            value={state.textAnswer}
+                            onChange={handleChangeTextAnswer}
                             placeholder="Câu trả lời của bạn"
                             className="outline-none text-sm py-2 h-[40px] w-full resize-none border-b border-solid border-[rgb(239,239,239)]"
                         />
