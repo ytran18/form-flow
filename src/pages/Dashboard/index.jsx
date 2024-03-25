@@ -33,6 +33,12 @@ const Dashboard = () => {
         dispatch(formPackage({}))
     },[])
 
+    const compare = (a, b) => {
+        var dateA = new Date(a.mordified_at);
+        var dateB = new Date(b.mordified_at);
+        return dateB - dateA;
+    }
+
     const getData = () => {
         const formDocRef = collection(fireStore, 'forms');
 
@@ -41,6 +47,8 @@ const Dashboard = () => {
             querySnapshot.forEach((doc) => {
                 if (doc.data()) forms.push(doc.data());
             });
+            forms = forms.sort(compare);
+            console.log(forms);
             state.forms = forms;
             state.isLoading = false;
             setState(prev => ({...prev}));
