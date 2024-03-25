@@ -45,7 +45,7 @@ const FormHeader = (props) => {
                 onClick={handleNavigate}
             >
                 <IconForm className="cursor-pointer"/>
-                <div className="font-semibold text-xl">Untitled forms</div>
+                <div className="font-semibold text-xl">{form?.formTitle || 'Untitled form'}</div>
             </div>
             <div className="flex items-center gap-4">
 
