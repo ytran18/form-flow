@@ -30,6 +30,7 @@ const Form = () => {
         formDescription: '',
         questions: [],
         isVisibleModalSend: false,
+        isScroll: false,
     });
 
     const navigate = useNavigate();
@@ -110,6 +111,7 @@ const Form = () => {
         const currBlockIndex = updatedQuestions.findIndex(item => item._id === blockId);
         updatedQuestions.splice(currBlockIndex + 1, 0, newItem);
         state.questions = updatedQuestions;
+        state.isScroll = true;
         setState(prev => ({...prev}));
     };
 
@@ -252,9 +254,9 @@ const Form = () => {
     const handleSend = (type) => {
         if (type === 'copy') {
             let link = `https://form-flow-six.vercel.app/guest/${form?._id}`;
-            if (process.env.NODE_ENV === 'development') {
-                link = `http://localhost:5000/guest/${form?._id}`;
-            };
+            // if (process.env.NODE_ENV === 'development') {
+            //     link = `http://localhost:5000/guest/${form?._id}`;
+            // };
             navigator.clipboard.writeText(link).then(() => {
                 message.success("Copy successfully!")
             })
@@ -337,6 +339,7 @@ const Form = () => {
                     questions={state.questions}
                     formTitle={state.formTitle}
                     formDescription={state.formDescription}
+                    isScroll={state.isScroll}
                     onChangeFormTitle={onChangeFormTitle}
                     onChangeFormDescription={onChangeFormDescription}
                     handleAddBlock={handleAddBlock}
@@ -381,7 +384,6 @@ const Form = () => {
                 <Tabs
                     hideAdd
                     centered
-                    defaultActiveKey="2"
                     rootClassName="w-full h-full"
                     items={tabContent.map((item) => {
                         return {

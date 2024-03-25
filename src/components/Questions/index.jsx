@@ -8,7 +8,7 @@ import IconPlus from '@icon/iconPlus.svg';
 
 const Questions = (props) => {
 
-    const { questions, formTitle, formDescription } = props;
+    const { questions, formTitle, formDescription, isScroll } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, onChangeFormTitle, onChangeFormDescription, handleRequire } = props;
     const { handleUploadQuestionImage, handleChangeAnswerIndex, handleRemoveAnswer, handleImageAnwer, handleDeleteImageAnswer } = props;
     const { handleInputClickAnswer, handleCopyBlock, handleRemoveBlock, handleRemoveQuestionImage } = props;
@@ -49,6 +49,7 @@ const Questions = (props) => {
                     <div className="w-full pb-3" key={`question-${item._id}`}>
                         <QuestionBlock
                             question={item}
+                            isScroll={isScroll}
                             handleAddBlock={handleAddBlock}
                             onChangeQuestionTitle={onChangeQuestionTitle}
                             handleChangeType={handleChangeType}

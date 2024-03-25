@@ -15,7 +15,7 @@ import './style.css';
 
 const QuestionBlock = (props) => {
 
-    const { question } = props;
+    const { question, isScroll } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, handleRequire, handleUploadQuestionImage, handleRemoveAnswer } = props;
     const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer, handleRemoveBlock, handleCopyBlock } = props;
     const { handleRemoveQuestionImage } = props;
@@ -45,7 +45,7 @@ const QuestionBlock = (props) => {
 
     useEffect(() => {
         const element = document.getElementById(question._id);
-        if (element) {
+        if (element && isScroll) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
     },[question._id]);
