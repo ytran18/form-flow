@@ -251,7 +251,10 @@ const Form = () => {
 
     const handleSend = (type) => {
         if (type === 'copy') {
-            const link = `http://localhost:5000/guest/${form?._id}`;
+            let link = `https://form-flow-six.vercel.app/guest/${form?._id}`;
+            if (process.env.NODE_ENV === 'development') {
+                link = `http://localhost:5000/guest/${form?._id}`;
+            };
             navigator.clipboard.writeText(link).then(() => {
                 message.success("Copy successfully!")
             })
