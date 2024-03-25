@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Select, message, Spin, Empty } from 'antd';
+import { message, Spin, Empty } from 'antd';
 import { useNavigate } from "react-router-dom";
 
 import { useUserPackageHook } from '@core/redux/hooks';
@@ -32,24 +32,6 @@ const Dashboard = () => {
     useEffect(() => {
         dispatch(formPackage({}))
     },[])
-
-    const options = [
-        {
-            label: 'Owned by anyone',
-            value: 'Owned by anyone',
-            key: 0,
-        },
-        {
-            label: 'Owned by me',
-            value: 'Owned by me',
-            key: 1,
-        },
-        {
-            label: 'Not owned by me',
-            value: 'Not owned by me',
-            key: 2,
-        },
-    ];
 
     const getData = () => {
         const formDocRef = collection(fireStore, 'forms');
@@ -113,7 +95,7 @@ const Dashboard = () => {
 
     return (
         <div className="w-screen h-screen relative flex flex-col gap-10">
-            <div className="h-16 w-full">
+            <div className="h-16 min-h-16 w-full">
                 <Header
                     user={user}
                     handleLogout={handleLogout}
@@ -122,16 +104,6 @@ const Dashboard = () => {
             <div className="flex-grow overflow-y-auto flex flex-col gap-3 w-full px-8 ml:px-52">
                 <div className="w-full flex items-center justify-between">
                     <div className="font-semibold">Recent forms</div>
-                    {/* <div className="">
-                        <Select
-                            labelRender={labelRender}
-                            defaultValue={options[0]}
-                            style={{
-                                width: '100%',
-                            }}
-                            options={options}
-                        />
-                    </div> */}
                 </div>
                 {state.isLoading && (
                     <div className="w-full pt-10 flex justify-center">
@@ -149,6 +121,7 @@ const Dashboard = () => {
                             <div key={`forms-${index}`}>
                                 <Card
                                     data={item}
+                                    getData={getData}
                                     handleNavigateForm={handleNavigateForm}
                                 />
                             </div>

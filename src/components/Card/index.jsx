@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 
-import { Dropdown, Popover, Modal, Input } from 'antd';
+import { Dropdown, Popover, Modal, Input, message } from 'antd';
+
+import { fireStore } from "@core/firebase/firebase";
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 import IconForm from '@icon/iconForm.svg';
 import IconMore from '@icon/iconMore.svg';
@@ -10,12 +13,13 @@ import IconNewTab from '@icon/iconNewTab.svg';
 
 const Card = (props) => {
 
-    const { data, handleNavigateForm } = props;
+    const { data, handleNavigateForm, getData } = props;
 
     const [state, setState] = useState({
         isOpenContextMenu: false,
         isOpenModalRename: false,
         isOpenModalRemove: false,
+        newName: '',
     });
 
     const contextMenu = [
@@ -44,15 +48,31 @@ const Card = (props) => {
         setState(prev => ({...prev}));
     };
 
-    const handleRename = (status) => {
+    const handleRename = async (status, isSave) => {
         state.isOpenModalRename = status !== undefined ? status : true;
-        state.isOpenContextMenu = false,
+        state.isOpenContextMenu = false;
+
+        if (isSave && state.newName) {
+            const docRef = doc(fireStore, 'forms', data?._id);
+            await updateDoc(docRef, {formTitle: state.newName});
+            message.success('Rename successfully!', 3);
+            getData();
+        };
+
         setState(prev => ({...prev}));
     };
     
-    const handleRemove = (status) => {
+    const handleRemove = async (status, isDelete) => {
         state.isOpenModalRemove = status !== undefined ? status : true;
-        state.isOpenContextMenu = false,
+        state.isOpenContextMenu = false;
+
+        if (isDelete) {
+            const docRef = doc(fireStore, 'forms', data?._id);
+            await deleteDoc(docRef);
+            message.success('Delete form successfully!', 3);
+            getData();
+        };
+
         setState(prev => ({...prev}));
     };
     
@@ -114,12 +134,16 @@ const Card = (props) => {
                     okButtonProps={{className:"bg-[rgb(132,47,207)]"}}
                     cancelButtonProps={{className:"text-[rgb(132,47,207)]"}}
                     cancelText="Cancel"
-                    onOk={() => handleRename(false)}
+                    onOk={() => handleRename(false, true)}
                     onCancel={() => handleRename(false)}
                 >
                     <div className="flex flex-col gap-3">
                         <div>Please enter a new name for the item:</div>
-                        <Input placeholder="Enter new name"/>
+                        <Input
+                            placeholder="Enter new name"
+                            value={state.newName}
+                            onChange={(e) => setState(prev => ({...prev, newName: e?.target?.value}))}
+                        />
                     </div>
                 </Modal>
                 <Modal
@@ -129,7 +153,7 @@ const Card = (props) => {
                     okButtonProps={{className:"bg-[rgb(132,47,207)]"}}
                     cancelButtonProps={{className:"text-[rgb(132,47,207)]"}}
                     cancelText="Cancel"
-                    onOk={() => handleRemove(false)}
+                    onOk={() => handleRemove(false, true)}
                     onCancel={() => handleRemove(false)}
                 >
                     <div>This item will be deleted, are you sure?</div>

@@ -324,6 +324,7 @@ const Form = () => {
                     handleSend={handleSend}
                     handleSave={handleSave}
                     handleNavigate={handleNavigate}
+                    form={form}
                 />
             </div>
             <div className="flex-grow w-full overflow-y-auto">
