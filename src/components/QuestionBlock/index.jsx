@@ -164,14 +164,14 @@ const QuestionBlock = (props) => {
                 </div>
             </div>
             {question?.image_url?.length > 0 && (
-                <div className="relative">
+                <div className="relative w-fit">
                     {state.isLoading && (
                         <Spin tip="Loading..." size="small"/>
                     )}
                     <img
                         alt="image"
                         style={{
-                            width: '100%',
+                            width: '500px',
                         }}
                         src={question.image_url}
                         onLoad={onLoad}

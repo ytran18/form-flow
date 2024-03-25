@@ -77,15 +77,16 @@ const MultipleChoice = (props) => {
                                 )}
                             </Radio>
                             {item.img_url.length > 0 && (
-                                <div className="relative">
+                                <div className="relative w-fit h-fit">
                                     {state.loading && (
                                         <Spin tip="Loading..." size="small"/>
                                     )}
                                     <img
                                         alt="image"
                                         style={{
-                                            width: '100%',
+                                            boxShadow: '0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12), 0 1px 3px 0 rgba(0,0,0,.2)',
                                         }}
+                                        className="max-h-[120px] max-w-[180px]"
                                         src={item.img_url}
                                         onLoad={() => setState(prev => ({...prev, loading: false}))}
                                     />
