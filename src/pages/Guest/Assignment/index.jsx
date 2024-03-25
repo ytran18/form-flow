@@ -61,9 +61,9 @@ const Assignment = (props) => {
             message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
             return;
         };
-        
+
         for (let i = 0; i < state.answers.length; i++) {
-            if (state.answers[i]?.value === null || state.answers[i] === null) {
+            if ((state.answers[i]?.value === null || state.answers[i] === null) && form?.questions[i]?.isRequire) {
                 message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
                 return;
             };
