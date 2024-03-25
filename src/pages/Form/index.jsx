@@ -254,9 +254,9 @@ const Form = () => {
     const handleSend = (type) => {
         if (type === 'copy') {
             let link = `https://form-flow-six.vercel.app/guest/${form?._id}`;
-            // if (process.env.NODE_ENV === 'development') {
-            //     link = `http://localhost:5000/guest/${form?._id}`;
-            // };
+            if (process.env.NODE_ENV === 'development') {
+                link = `http://localhost:5000/guest/${form?._id}`;
+            };
             navigator.clipboard.writeText(link).then(() => {
                 message.success("Copy successfully!")
             })
@@ -412,7 +412,7 @@ const Form = () => {
                 <div className="w-full">
                     <input
                         disabled
-                        value={`http://localhost:5000/guest/${form?._id}`}
+                        value={process.env.NODE_ENV === 'development' ? `https://form-flow-six.vercel.app/guest/${form?._id}` :  `http://localhost:5000/guest/${form?._id}`}
                         className="w-full border-b outline-none py-2"
                     />
                 </div>
