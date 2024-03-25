@@ -274,17 +274,18 @@ const Form = () => {
     };
 
     const handleSave = async () => {
-        const questions = [...state.questions];
-        questions.map((item) => {
+        let updatedQuestions = [...state.questions];
+    
+        updatedQuestions = updatedQuestions.map((item, index) => {
             if (item?.type_answer !== 'paragraph') {
                 return {
                     ...item,
-                    answer: item?.answer.splice(-1),
-                }
-            };
-            return item;
+                    index: index + 1,
+                    answer: item?.answer.slice(0, -1),
+                };
+            }
+            return { ...item, index: index + 1 };
         });
-        
         
         try {
             let previewURL = '';
@@ -297,7 +298,7 @@ const Form = () => {
                 _id: location.state === 'new' ? param.formId : form?._id,
                 formTitle: state.formTitle,
                 formDescription: state.formDescription,
-                questions: questions,
+                questions: updatedQuestions,
                 mordified_at: new Date().toLocaleString(),
                 preview_img: previewURL,
             };
@@ -354,7 +355,7 @@ const Form = () => {
         {
             label: 'Responses',
             key: '2',
-            children: <Responses />,
+            children: <Responses form={form} formId={form?._id} />,
         },
         {
             label: 'Settings',
@@ -377,6 +378,7 @@ const Form = () => {
                 <Tabs
                     hideAdd
                     centered
+                    defaultActiveKey="2"
                     rootClassName="w-full h-full"
                     items={tabContent.map((item) => {
                         return {

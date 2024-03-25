@@ -47,6 +47,7 @@ const Assignment = (props) => {
         const questionIndex = questionsCopy.findIndex(element => element?._id === questionId);
 
         const rs = {
+            questionId: questionId,
             type_question: typeQuestion,
             value: answer,
         };
