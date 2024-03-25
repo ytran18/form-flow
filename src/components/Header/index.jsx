@@ -10,7 +10,7 @@ const { Search } = Input;
 
 const Header = (props) => {
 
-    const { handleLogout, user } = props;
+    const { handleLogout, user, searchValue, handleSearch } = props;
 
     const [state, setState] = useState({
         isOpenUserMenu: false,
@@ -89,9 +89,12 @@ const Header = (props) => {
                 <Search
                     placeholder="Search forms ..."
                     size="large"
+                    value={searchValue}
+                    onChange={handleSearch}
                 />
             </div>
-            <div>
+            <div className="w-1 h-1 hidden ml:flex"></div>
+            {/* <div>
                 <Popover
                     trigger={"click"}
                     placement="bottomLeft"
@@ -147,7 +150,7 @@ const Header = (props) => {
                         className="cursor-pointer"
                     />
                 </Popover>
-            </div>
+            </div> */}
         </div>
     );
 };

@@ -27,6 +27,8 @@ const Dashboard = () => {
     const [state, setState] = useState({
         forms: [],
         isLoading: true,
+        search: '',
+        searchForm: [],
     });
 
     useEffect(() => {
@@ -61,16 +63,16 @@ const Dashboard = () => {
         fetchData();
     },[]); 
 
-    const labelRender = (props) => {
-        const { label, value } = props;
-        if (label) return value;
-    };
+    // const labelRender = (props) => {
+    //     const { label, value } = props;
+    //     if (label) return value;
+    // };
 
-    useEffect(() => {
-        if (Object.keys(user).length === 0) {
-            navigate({pathname:'/login'});
-        };
-    },[user]);
+    // useEffect(() => {
+    //     if (Object.keys(user).length === 0) {
+    //         navigate({pathname:'/login'});
+    //     };
+    // },[user]);
 
     const handleLogout = () => {
         setTimeout(() => {
@@ -112,11 +114,28 @@ const Dashboard = () => {
         );
     };
 
+    const handleSearch = (event) => {
+        state.search = event?.target?.value;
+        const searchForms = [...state.forms];
+        let arr = [];
+
+        searchForms.map((item) => {
+            if (item?.formTitle?.toLowerCase()?.trim()?.includes(event?.target?.value?.trim().toLowerCase())) {
+                arr.push(item);
+            };
+        });
+        state.searchForm = arr;
+
+        setState(prev => ({...prev}));
+    };
+
     return (
         <div className="w-screen h-screen relative flex flex-col gap-10">
             <div className="h-16 min-h-16 w-full">
                 <Header
                     user={user}
+                    searchValue={state.search}
+                    handleSearch={handleSearch}
                     handleLogout={handleLogout}
                 />
             </div>
@@ -134,19 +153,35 @@ const Dashboard = () => {
                         <Empty />
                     </div>
                 )}
-                <div className="flex flex-wrap justify-center gap-5 pb-4">
-                    {state.forms.length > 0 && state.forms.map((item, index) => {
-                        return (
-                            <div key={`forms-${index}`}>
-                                <Card
-                                    data={item}
-                                    getData={getData}
-                                    handleNavigateForm={handleNavigateForm}
-                                />
-                            </div>
-                        )
-                    })}
-                </div>
+                {state.search.length === 0 ? (
+                    <div className="flex flex-wrap justify-center gap-5 pb-4">
+                        {state.forms.length > 0 && state.forms.map((item, index) => {
+                            return (
+                                <div key={`forms-${index}`}>
+                                    <Card
+                                        data={item}
+                                        getData={getData}
+                                        handleNavigateForm={handleNavigateForm}
+                                    />
+                                </div>
+                            )
+                        })}
+                    </div>
+                ) : (
+                    <div className="flex flex-wrap justify-center gap-5 pb-4">
+                        {state.searchForm.length > 0 && state.searchForm.map((item, index) => {
+                            return (
+                                <div key={`forms-${index}`}>
+                                    <Card
+                                        data={item}
+                                        getData={getData}
+                                        handleNavigateForm={handleNavigateForm}
+                                    />
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
             </div>
             <div className="absolute bottom-4 right-8 ml:right-10">
                 <div
