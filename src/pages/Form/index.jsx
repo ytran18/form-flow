@@ -39,9 +39,22 @@ const Form = () => {
 
     useEffect(() => {
         if (Object.keys(form).length > 0) {
+            const questions = [...form.questions];
+            const defaultAnswer = { value: questions.length + 1, label: 'Add option', img_url: ''};
+
+            questions.map((item) => {
+                if (item?.type_answer !== 'paragraph' && item?.answer?.[item?.answer?.length - 1]?.label !== 'Add option') {
+                    return {
+                        ...item,
+                        answer: item?.answer.push(defaultAnswer),
+                    };
+                };
+                return item;
+            });
+
             state.formTitle = form.formTitle;
             state.formDescription = form.formDescription;
-            state.questions = form.questions;
+            state.questions = questions;
 
             setState(prev => ({...prev}));
         }
@@ -247,11 +260,22 @@ const Form = () => {
     };
 
     const handleSave = async () => {
+        const questions = [...state.questions];
+        questions.map((item) => {
+            if (item?.type_answer !== 'paragraph') {
+                return {
+                    ...item,
+                    answer: item?.answer.splice(-1),
+                }
+            };
+            return item;
+        });
+
         const rs = {
             _id: location.state === 'new' ? param.formId : form?._id,
             formTitle: state.formTitle,
             formDescription: state.formDescription,
-            questions: state.questions,
+            questions: questions,
             mordified_at: new Date().toLocaleString(),
         };
 
