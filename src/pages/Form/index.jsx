@@ -383,7 +383,7 @@ const Form = () => {
                             label: item.label,
                             key: item.key,
                             children: (
-                                <div className="px-80 overflow-y-auto py-3 w-full h-full bg-[rgb(240,235,248)]">
+                                <div className="px-8 md:px-16 ml:px-32 lg:px-48 xl:px-80 overflow-y-auto py-3 w-full h-full bg-[rgb(240,235,248)]">
                                     {item.children}
                                 </div>
                             ),
