@@ -77,6 +77,11 @@ const Question = (props) => {
                         <span className="text-red-500">{` *`}</span>
                     )}
                 </div>
+                {question?.image_url?.length > 0 && (
+                    <div className="w-auto md:w-[500px] mb-5">
+                        <img src={question?.image_url} className="w-full h-full"/>
+                    </div>
+                )}
                 {type_answer === 'choice' && (
                     <div className="w-full">
                         <Radio.Group

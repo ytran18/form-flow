@@ -363,11 +363,6 @@ const Form = () => {
             key: '2',
             children: <Responses form={form} formId={form?._id} />,
         },
-        {
-            label: 'Settings',
-            key: '3',
-            children: <Settings />,
-        }
     ];
 
     return (
