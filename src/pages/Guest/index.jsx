@@ -6,16 +6,20 @@ import { fireStore } from "@core/firebase/firebase";
 import { doc, getDoc } from 'firebase/firestore';
 
 import { useAssigneePackageHook } from "@core/redux/hooks";
+import { useDispatch } from "react-redux";
+import { assigneePackage } from "@core/redux/actions";
 
 import { Spin } from 'antd';
 
 import GuestHeader from "./GuestHeader";
 import CommonQuestion from "./CommonQuestion";
 import Assignment from "./Assignment";
+import End from "./End";
 
 const Guest = () => {
 
     const param = useParams();
+    const dispatch = useDispatch();
 
     const [state, setState] = useState({
         form: {},
@@ -33,7 +37,6 @@ const Guest = () => {
                 if (snapshot.data()) form = snapshot.data();
                 state.form = form;
                 state.isLoading = false;
-                if (Object.keys(assignee).length > 0) state.activeTab = 1;
                 setState(prev => ({...prev}));
             });
         };
@@ -41,6 +44,12 @@ const Guest = () => {
 
     const handleNextStep = (data) => {
         state.activeTab = 1;
+        setState(prev => ({...prev}));
+    };
+
+    const handleEnd = () => {
+        state.activeTab = 2;
+        dispatch(assigneePackage({}));
         setState(prev => ({...prev}));
     };
 
@@ -57,18 +66,27 @@ const Guest = () => {
                     <Assignment
                         form={state.form}
                         infoQuestion={assignee}
+                        handleEnd={handleEnd}
+                    />
+                );
+            case 2: 
+                return (
+                    <End
+                        form={state.form}
                     />
                 );
         };
     };
 
     return (
-        <div className="w-screen h-screen overflow-y-auto gap-5 px-80 py-3 bg-[rgb(240,235,248)] flex flex-col items-center">
-            <div className="w-full">
-                <GuestHeader
-                    form={state.form}
-                />
-            </div>
+        <div className="w-screen h-screen overflow-y-auto gap-5 px-8 md:px-16 ml:px-32 lg:px-48 xl:px-80 py-3 bg-[rgb(240,235,248)] flex flex-col items-center">
+            {state.activeTab !== 2 && (
+                <div className="w-full">
+                    <GuestHeader
+                        form={state.form}
+                    />
+                </div>
+            )}
             {state.isLoading && (
                 <div className="w-full flex items-center justify-center">
                     <Spin />

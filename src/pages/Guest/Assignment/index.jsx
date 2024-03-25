@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Radio, Button, message } from 'antd';
 
@@ -7,17 +7,34 @@ import { v4 as uuidv4 } from 'uuid';
 import { fireStore } from "@core/firebase/firebase";
 import { doc, collection, setDoc } from 'firebase/firestore';
 
+import { useAssigneePackageHook } from "@core/redux/hooks";
+
 import Question from "./Question";
 
 const Assignment = (props) => {
 
-    const { form, infoQuestion } = props;
+    const { form, infoQuestion, handleEnd } = props;
+    const assignee = useAssigneePackageHook();
 
     const [state, setState] = useState({
         isInfo: null,
         infoBooleanChange: false,
         answers: new Array(form?.questions?.length || 1).fill(null),
     });
+
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            const confirmationMessage = 'Những thay đổi của bạn sẽ không được lưu!';
+            event.returnValue = confirmationMessage;
+            return confirmationMessage;
+        };
+    
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    
+        return () => {
+          window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
 
     const onChangeInfoBoolean = (event) => {
         state.isInfo = event?.target?.value;
@@ -45,7 +62,7 @@ const Assignment = (props) => {
         };
         
         for (let i = 0; i < state.answers.length; i++) {
-            if (state.answers[i] === null) {
+            if (state.answers[i]?.value === null || state.answers[i] === null) {
                 message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
                 return;
             };
@@ -55,11 +72,13 @@ const Assignment = (props) => {
             _id: uuidv4(),
             formId: form?._id,
             answers: state.answers, 
+            assignee: assignee,
         };
         try {
             const docRef = doc(collection(fireStore, 'answers'), rs._id);
             await setDoc(docRef, rs);
             message.success('Send answer successfully', 3);
+            handleEnd();
         } catch (error) {
             console.log(error);
         };

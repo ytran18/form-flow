@@ -33,29 +33,29 @@ const Question = (props) => {
         };
     },[question]);
 
-    const onChangeChoice = (event) => {
-        state.choice = event?.target?.value;
-        state.isChangeChoice = true;
-        handleAnswer(question?._id, type_answer, event?.target?.value); // id of question, type of question and value of answer
+    const onChangeChoice = (event, isDelete) => {
+        state.choice = isDelete ? null : event?.target?.value;
+        state.isChangeChoice = isDelete ? false : true;
+        handleAnswer(question?._id, type_answer, isDelete ? null : event?.target?.value); // id of question, type of question and value of answer
         setState(prev => ({...prev}));
     };
 
-    const onChangeDropdown = (event) => {
-        state.isChangeDropdown = true;
-        state.dropdown = event;
-        handleAnswer(question?._id, type_answer, event);
+    const onChangeDropdown = (event, isDelete) => {
+        state.isChangeDropdown = isDelete ? false : true;
+        state.dropdown = isDelete ? null : event;
+        handleAnswer(question?._id, type_answer, isDelete ? null : event);
         setState(prev => ({...prev}));
     };
 
-    const onChangeMultiple = (event) => {
-        state.multiple = event;
-        state.isChangeMultiple = true;
-        handleAnswer(question?._id, type_answer, event);
+    const onChangeMultiple = (event, isDelete) => {
+        state.multiple = isDelete ? null : event;
+        state.isChangeMultiple = isDelete ? false : true;
+        handleAnswer(question?._id, type_answer, isDelete ? null : event);
         setState(prev => ({...prev}));
     };
 
     const handleChangeTextAnswer = (event) => {
-        handleAnswer(question?._id, type_answer, event?.target?.value)
+        handleAnswer(question?._id, type_answer, event?.target?.value?.length === 0 ? null : event?.target?.value);
         setState(prev => ({...prev, textAnswer: event?.target?.value}));
     };
 
@@ -117,7 +117,7 @@ const Question = (props) => {
                         {state.isChangeChoice && (
                             <div
                                 className="w-full text-sm flex justify-end cursor-pointer"
-                                onClick={() => setState(prev => ({...prev, choice: null, isChangeChoice: false}))}
+                                onClick={(e) => onChangeChoice(e, true)}
                             >
                                 <div className="py-1 px-5 hover:bg-[rgb(249,249,249)]">
                                     Xoá lựa chọn
@@ -131,7 +131,7 @@ const Question = (props) => {
                         <Checkbox.Group
                             value={state.multiple}
                             className={`${state.isHasImg ? 'grid grid-cols-2' : 'flex flex-col'} w-full gap-3`}
-                            onChange={onChangeMultiple}
+                            onChange={(e) => onChangeMultiple(e, false)}
                         >
                             {question?.answer?.length > 0 && question?.answer?.map((item, index) => {
                                 return (
@@ -163,10 +163,10 @@ const Question = (props) => {
                                 )
                             })}
                         </Checkbox.Group>
-                        {state.isChangeChoice && (
+                        {state.isChangeMultiple && (
                             <div
                                 className="w-full text-sm flex justify-end cursor-pointer"
-                                onClick={() => setState(prev => ({...prev, choice: null, isChangeChoice: false}))}
+                                onClick={(e) => onChangeMultiple(e, true)}
                             >
                                 <div className="py-1 px-5 hover:bg-[rgb(249,249,249)]">
                                     Xoá lựa chọn
@@ -181,13 +181,13 @@ const Question = (props) => {
                             className="w-[200px]"
                             placeholder="Chọn"
                             value={state.dropdown}
-                            onChange={onChangeDropdown}
+                            onChange={(e) => onChangeDropdown(e, false)}
                             options={question?.answer}
                         />
                         {state.isChangeDropdown && (
                             <div
                                 className="w-full text-sm flex justify-end cursor-pointer"
-                                onClick={() => setState(prev => ({...prev, dropdown: null, isChangeDropdown: false}))}
+                                onClick={(e) => onChangeDropdown(e, true)}
                             >
                                 <div className="py-1 px-5 hover:bg-[rgb(249,249,249)]">
                                     Xoá lựa chọn
