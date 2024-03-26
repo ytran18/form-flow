@@ -57,14 +57,21 @@ const QuestionBlock = (props) => {
             reader.onerror = (error) => reject(error);
     });
 
-    const onInput = (e) => {
-        const element = e.target;
+    const onInput = (e, isInit) => {
+        const element = isInit ? e : e.target;
         if (element.value.trim() === '') {
             element.style.height = '57px';
         } else {
             element.style.height = `${element.scrollHeight}px`;
         };
     };
+
+    useEffect(() => {
+        const textareas = document.querySelectorAll('#question-title');
+        textareas.forEach((textarea) => {
+            onInput(textarea, true);
+        });
+    }, []); 
 
     const onUploadChange = async (event) => {
         const file = event.file;
@@ -138,9 +145,10 @@ const QuestionBlock = (props) => {
             <div className="w-full flex gap-10">
                 <textarea
                     value={question.title}
-                    onInput={onInput}
+                    onInput={onInput} 
+                    id="question-title"
                     placeholder="Question"
-                    className="w-[400px] tracking-wide min-h-[57px] max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
+                    className="w-[400px] tracking-wide min-h-[57px] overflow-hidden max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
                     onChange={(e) => onChangeQuestionTitle(e, question._id)}
                 />
                 <div className="flex">
