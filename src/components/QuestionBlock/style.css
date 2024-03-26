@@ -1,9 +1,3 @@
 .ant-switch-checked {
     background-color: rgb(103,58,183) !important;
 }
-
-.question-title::before {
-    content: attr(placeholder);
-    position: absolute;
-    opacity: 0.6;
-}
