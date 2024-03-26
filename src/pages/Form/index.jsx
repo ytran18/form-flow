@@ -59,7 +59,7 @@ const Form = () => {
             state.formTitle = form.formTitle;
             state.formDescription = form.formDescription;
             state.questions = questions;
-            state.isAvailable = form?.isAvailable;
+            state.isAvailable = form?.isAvailable || true;
 
             setState(prev => ({...prev}));
         }
