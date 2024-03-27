@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { DatePicker, Button, message } from 'antd';
+import { DatePicker, Button, message, Select } from 'antd';
 
 import { useDispatch } from "react-redux";
 import { assigneePackage } from "@core/redux/actions";
@@ -11,27 +11,118 @@ const CommonQuestion = (props) => {
 
     const [state, setState] = useState({
         name:  '',
-        birthday: '',
+        birthday: {
+            month: '',
+            date: '',
+            year: ''
+        },
         cccd: '',
         company: ''
     });
 
     const dispatch = useDispatch();
 
-    const onChangeBirthday = (date, dateString) => {
-        state.birthday = dateString;
+    const months = [
+        { value: '1', label: 'Tháng 1'},
+        { value: '2', label: 'Tháng 2'},
+        { value: '3', label: 'Tháng 3'},
+        { value: '4', label: 'Tháng 4'},
+        { value: '5', label: 'Tháng 5'},
+        { value: '6', label: 'Tháng 6'},
+        { value: '7', label: 'Tháng 7'},
+        { value: '8', label: 'Tháng 8'},
+        { value: '9', label: 'Tháng 9'},
+        { value: '10', label: 'Tháng 10'},
+        { value: '11', label: 'Tháng 11'},
+        { value: '12', label: 'Tháng 12'},
+    ];
+
+    const days31 = [
+        { value: '1', label: 1}, { value: '2', label: 2}, { value: '3', label: 3},
+        { value: '4', label: 4}, { value: '5', label: 5}, { value: '6', label: 6},
+        { value: '7', label: 7}, { value: '8', label: 8}, { value: '9', label: 9},
+        { value: '10', label: 10}, { value: '11', label: 11}, { value: '12', label: 12},
+        { value: '13', label: 13}, { value: '14', label: 14}, { value: '15', label: 15},
+        { value: '16', label: 16}, { value: '17', label: 17}, { value: '18', label: 18},
+        { value: '19', label: 19}, { value: '20', label: 20}, { value: '21', label: 21},
+        { value: '22', label: 22}, { value: '23', label: 23}, { value: '24', label: 24},
+        { value: '25', label: 25}, { value: '26', label: 26}, { value: '27', label: 27},
+        { value: '28', label: 28}, { value: '29', label: 29}, { value: '30', label: 30},
+        { value: '31', label: 31},
+    ];
+
+    const days30 = [
+        { value: '1', label: 1}, { value: '2', label: 2}, { value: '3', label: 3},
+        { value: '4', label: 4}, { value: '5', label: 5}, { value: '6', label: 6},
+        { value: '7', label: 7}, { value: '8', label: 8}, { value: '9', label: 9},
+        { value: '10', label: 10}, { value: '11', label: 11}, { value: '12', label: 12},
+        { value: '13', label: 13}, { value: '14', label: 14}, { value: '15', label: 15},
+        { value: '16', label: 16}, { value: '17', label: 17}, { value: '18', label: 18},
+        { value: '19', label: 19}, { value: '20', label: 20}, { value: '21', label: 21},
+        { value: '22', label: 22}, { value: '23', label: 23}, { value: '24', label: 24},
+        { value: '25', label: 25}, { value: '26', label: 26}, { value: '27', label: 27},
+        { value: '28', label: 28}, { value: '29', label: 29}, { value: '30', label: 30},
+    ];
+
+    const days28 = [
+        { value: '1', label: 1}, { value: '2', label: 2}, { value: '3', label: 3},
+        { value: '4', label: 4}, { value: '5', label: 5}, { value: '6', label: 6},
+        { value: '7', label: 7}, { value: '8', label: 8}, { value: '9', label: 9},
+        { value: '10', label: 10}, { value: '11', label: 11}, { value: '12', label: 12},
+        { value: '13', label: 13}, { value: '14', label: 14}, { value: '15', label: 15},
+        { value: '16', label: 16}, { value: '17', label: 17}, { value: '18', label: 18},
+        { value: '19', label: 19}, { value: '20', label: 20}, { value: '21', label: 21},
+        { value: '22', label: 22}, { value: '23', label: 23}, { value: '24', label: 24},
+        { value: '25', label: 25}, { value: '26', label: 26}, { value: '27', label: 27},
+        { value: '28', label: 28}
+    ];
+
+    const days29 = [
+        { value: '1', label: 1}, { value: '2', label: 2}, { value: '3', label: 3},
+        { value: '4', label: 4}, { value: '5', label: 5}, { value: '6', label: 6},
+        { value: '7', label: 7}, { value: '8', label: 8}, { value: '9', label: 9},
+        { value: '10', label: 10}, { value: '11', label: 11}, { value: '12', label: 12},
+        { value: '13', label: 13}, { value: '14', label: 14}, { value: '15', label: 15},
+        { value: '16', label: 16}, { value: '17', label: 17}, { value: '18', label: 18},
+        { value: '19', label: 19}, { value: '20', label: 20}, { value: '21', label: 21},
+        { value: '22', label: 22}, { value: '23', label: 23}, { value: '24', label: 24},
+        { value: '25', label: 25}, { value: '26', label: 26}, { value: '27', label: 27},
+        { value: '28', label: 28}, { value: '29', label: 29},
+    ];
+
+    const fullDates = ['1', '3', '5', '7', '8', '10', '12'];
+
+    const onChangeYear = (date, dateString) => {
+        state.birthday.year = dateString;
+        state.birthday.date = '';
         setState(prev => ({...prev}));
     };
 
+    const onChangeMonth = (event) => {
+        state.birthday.month = event;
+        state.birthday.date = '';
+        setState(prev => ({...prev}));
+    };
+    
+    const onChangeDate = (event) => {
+        state.birthday.date = event;
+        setState(prev => ({...prev}));
+    };
+
+    const isLeapYear = (y) => {
+        const year = y - 0;
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    };
+
     const handleNext = () => {
-        if (!state.name || !state.birthday || !state.cccd) {
+        if (!state.name || !state.birthday.date || !state.birthday.month || !state.birthday.year || !state.cccd) {
             message.error('Hãy nhập đầy đủ thông tin!', 3);
             return;
         };
 
         const rs = {
             name: state.name,
-            birthday: state.birthday,
+            birthday: `${state.birthday.date}-${state.birthday.month}-${state.birthday.year}`,
             cccd: state.cccd,
             company: state.company,
         };
@@ -39,6 +130,8 @@ const CommonQuestion = (props) => {
         dispatch(assigneePackage(rs));
         handleNextStep(rs);
     };
+
+    const options = state.birthday.month != '2' ? fullDates.includes(state.birthday.month) ? days31 : days30 : isLeapYear(state.birthday.year) ? days29 : days28;
 
     return (
         <div className="w-full flex flex-col gap-5">
@@ -60,9 +153,26 @@ const CommonQuestion = (props) => {
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Ngày sinh: <span className="text-red-500">*</span></div>
-                    <div className="w-auto">
+                    <div className="w-auto flex items-center gap-5">
                         <DatePicker
-                            onChange={onChangeBirthday}
+                            picker="year"
+                            onChange={onChangeYear}
+                        />
+                        <Select
+                            showSearch
+                            placeholder="Tháng"
+                            style={{width: 120}}
+                            options={months}
+                            value={state.birthday.month}
+                            onChange={onChangeMonth}
+                        />
+                        <Select
+                            showSearch
+                            placeholder="Ngày"
+                            style={{width: 120}}
+                            options={options}
+                            value={state.birthday.date}
+                            onChange={onChangeDate}
                         />
                     </div>
                 </div>
