@@ -13,6 +13,11 @@ const GuestHeader = (props) => {
             <div className="px-5">
                 <div className="">{form?.formDescription}</div>
             </div>
+            {form?.formTitle && (
+                <div className="px-5 text-sm text-red-500">
+                    *Là câu hỏi bắt buộc
+                </div>
+            )}
         </div>
     );
 };

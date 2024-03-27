@@ -24,7 +24,7 @@ const CommonQuestion = (props) => {
     };
 
     const handleNext = () => {
-        if (!state.name || !state.birthday || !state.cccd || !state.company) {
+        if (!state.name || !state.birthday || !state.cccd) {
             message.error('Hãy nhập đầy đủ thông tin!', 3);
             return;
         };
@@ -84,7 +84,7 @@ const CommonQuestion = (props) => {
             </div>
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
-                    <div className="font-medium">Công ty: <span className="text-red-500">*</span></div>
+                    <div className="font-medium">Công ty:</div>
                     <div className="w-full border-b border-solid border-[rgb(219,219,219)]">
                         <input
                             type="text"
