@@ -154,7 +154,7 @@ const Dashboard = () => {
                     </div>
                 )}
                 {state.search.length === 0 ? (
-                    <div className="flex flex-wrap justify-center gap-5 pb-4">
+                    <div className="flex flex-wrap justify-between gap-5 pb-4">
                         {state.forms.length > 0 && state.forms.map((item, index) => {
                             return (
                                 <div key={`forms-${index}`}>
