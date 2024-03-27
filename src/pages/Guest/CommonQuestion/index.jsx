@@ -12,8 +12,8 @@ const CommonQuestion = (props) => {
     const [state, setState] = useState({
         name:  '',
         birthday: {
-            month: '',
-            date: '',
+            month: 'Tháng',
+            date: 'Ngày',
             year: ''
         },
         cccd: '',
@@ -94,13 +94,13 @@ const CommonQuestion = (props) => {
 
     const onChangeYear = (date, dateString) => {
         state.birthday.year = dateString;
-        state.birthday.date = '';
+        state.birthday.date = 'Ngày';
         setState(prev => ({...prev}));
     };
 
     const onChangeMonth = (event) => {
         state.birthday.month = event;
-        state.birthday.date = '';
+        state.birthday.date = 'Ngày';
         setState(prev => ({...prev}));
     };
     
