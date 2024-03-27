@@ -74,6 +74,7 @@ const Assignment = (props) => {
             formId: form?._id,
             answers: state.answers, 
             assignee: assignee,
+            modified_at: Math.floor(new Date().getTime() / 1000)
         };
         try {
             const docRef = doc(collection(fireStore, 'answers'), rs._id);

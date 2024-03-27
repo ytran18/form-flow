@@ -19,22 +19,53 @@ const Responses = (props) => {
     const [state, setState] = useState({
         isToggle: true,
         answers: [],
-        users: [],
+        dates: [],
     });
 
-    const getData = async () => {
-        let answers = [];
-        const querySnapshot = await getDocs(query(collection(fireStore, 'answers'), where('formId', '==', formId)));
+    function unixTimeToDateString(unixTime) {
+        var date = new Date(unixTime * 1000);
+    
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
 
+        var dateString = year + '-' + month + '-' + day;
+    
+        return dateString;
+    }
+
+    const getData = async () => {
+        let answersByDate = {};
+        let answers = [];
+    
+        const querySnapshot = await getDocs(query(collection(fireStore, 'answers'), where('formId', '==', formId)));
+    
         querySnapshot.forEach((doc) => {
-            if (doc.data()) answers.push(doc.data());
+            answers.push(doc.data());
+            const answerData = doc.data();
+            const dateKey = unixTimeToDateString(answerData.modified_at)
+
+            if (!answersByDate[dateKey]) {
+                answersByDate[dateKey] = [];
+            }
+            
+            answersByDate[dateKey].push(answerData);
         });
-        const filterUsers = [...answers];
-        filterUsers.map((item) => { return item.assignee });
+
+        const sortedDates = Object.keys(answersByDate).sort((a, b) => {
+            const dateA = new Date(a);
+            const dateB = new Date(b);
+            return dateB - dateA;
+        });
+    
+        const sortedAnswersByDate = {};
+        sortedDates.forEach(date => {
+            sortedAnswersByDate[date] = answersByDate[date];
+        });
 
         state.answers = answers;
-        state.users = filterUsers;
-        setState(prev => ({...prev}));
+        state.dates = sortedAnswersByDate;
+        setState(prev => ({ ...prev }));
     };
 
     useEffect(() => {
@@ -46,61 +77,64 @@ const Responses = (props) => {
     //     setState(prev => ({...prev}));
     // };
 
-    const handleDownloadExcel = (answerId) => {
-        const answer = state.answers.find(element => element._id === answerId);
-        let answerValue = new Array(answer?.answers?.length).fill(null);
+    const handleDownloadExcel = (date) => {
+        const table = [];
+        const users = state.dates[date];
+        users.map((item) => {
+            const answer = item.answers;
+            let answerValue = new Array(answer?.length).fill(null);
 
-        answer?.answers.map((item) => {
-            const index = form?.questions?.findIndex(ele => ele?._id === item?.questionId);
-            const type_question = item?.type_question;
-
-            if (type_question === "choice" || type_question === 'dropdown') {
-                form?.questions?.[index]?.answer?.map((ans) => {
-                    if (ans?.value === item?.value && item?.label !== 'Add option') {
-                        answerValue[index] = ans?.label;
-                    };
-                });
-            };
-
-            if (type_question === 'paragraph') {
-                answerValue[index] = item.value;
-            };
-
-            if (type_question === 'multiple-choice') {
-                if (!answerValue[index]) {
-                    answerValue[index] = '';
-                };
-                for (let i = 0; i < item?.value?.length; i++) {
+            answer.map((item) => {
+                const index = form?.questions?.findIndex(ele => ele?._id === item?.questionId);
+                const type_question = item?.type_question;
+    
+                if (type_question === "choice" || type_question === 'dropdown') {
                     form?.questions?.[index]?.answer?.map((ans) => {
-                        if (ans?.value === item?.value[i] && item?.label !== 'Add option') {
-                            if (answerValue[index] === '') {
-                                answerValue[index] += `${ans?.label}`;
-                            } else {
-                                answerValue[index] += `, ${ans?.label}`;
-                            };
+                        if (ans?.value === item?.value && item?.label !== 'Add option') {
+                            answerValue[index] = ans?.label;
                         };
                     });
                 };
-            };
+    
+                if (type_question === 'paragraph') {
+                    answerValue[index] = item.value;
+                };
+    
+                if (type_question === 'multiple-choice') {
+                    if (!answerValue[index]) {
+                        answerValue[index] = '';
+                    };
+                    for (let i = 0; i < item?.value?.length; i++) {
+                        form?.questions?.[index]?.answer?.map((ans) => {
+                            if (ans?.value === item?.value[i] && item?.label !== 'Add option') {
+                                if (answerValue[index] === '') {
+                                    answerValue[index] += `${ans?.label}`;
+                                } else {
+                                    answerValue[index] += `, ${ans?.label}`;
+                                };
+                            };
+                        });
+                    };
+                };
+            });
+            const name = item?.assignee?.name;
+            const birthday = item?.assignee?.birthday;
+            const cccd = item?.assignee?.cccd;
+            const cong_ty = item?.assignee?.company;
+
+            let obj = {};
+            answerValue.map((item, index) => {
+                obj[`Câu ${index + 1}`] = item;
+            });
+
+            table.push({
+                'Tên': name,
+                'Ngày sinh': birthday,
+                'Căn cước công dân': cccd,
+                'Công ty': cong_ty,
+                ...obj,
+            })
         });
-
-        const name = answer?.assignee?.name;
-        const birthday = answer?.assignee?.birthday;
-        const cccd = answer?.assignee?.cccd;
-        const cong_ty = answer?.assignee?.company;
-
-        let obj = {};
-        answerValue.map((item, index) => {
-            obj[`Câu ${index + 1}`] = item;
-        });
-
-        const table = [{
-            'Tên': name,
-            'Ngày sinh': birthday,
-            'Căn cước công dân': cccd,
-            'Công ty': cong_ty,
-            ...obj,
-        }];
 
         const ws = XLSX.utils.json_to_sheet(table);
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
@@ -133,17 +167,17 @@ const Responses = (props) => {
                     <div className="text-xl">Who has responded?</div>
                 </div>
                 <div className={`px-5 w-full text-sm flex flex-col gap-3`}>
-                    {state.users.map((item, index) => {
+                    {Object.keys(state.dates).map((item, index) => {
                         return (
                             <div key={`user-complete-${index}`} className="w-full flex items-center justify-between">
                                 <div className="flex items-center">
-                                    <div className="w-64">{item?.assignee?.name}</div>
-                                    <div className="w-52">{item?.assignee?.cccd}</div>
+                                    <div className="w-64">{item}</div>
+                                    <div className="">{state.dates[item]?.length}</div>
                                 </div>
                                 <div className="">
                                     <IconDownload
                                         className="cursor-pointer"
-                                        onClick={() => handleDownloadExcel(item?._id)}
+                                        onClick={() => handleDownloadExcel(item)}
                                     />
                                 </div>
                             </div>
