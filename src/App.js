@@ -1,13 +1,13 @@
 import React, { Fragment, useEffect } from "react";
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, HashRouter } from 'react-router-dom';
 import AppRoutes from "./routes.js";
 
 import './App.css';
 
 function App() {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Routes>
                 {
                     AppRoutes.map((item, index) => {
@@ -24,7 +24,7 @@ function App() {
                     })
                 }
             </Routes>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 

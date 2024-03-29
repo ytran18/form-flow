@@ -59,7 +59,7 @@ const Form = () => {
             state.formTitle = form.formTitle;
             state.formDescription = form.formDescription;
             state.questions = questions;
-            state.isAvailable = form?.isAvailable || true;
+            state.isAvailable = form?.isAvailable;
 
             setState(prev => ({...prev}));
         }
@@ -255,7 +255,7 @@ const Form = () => {
 
     const handleSend = (type) => {
         if (type === 'copy') {
-            let link = `https://form-flow-six.vercel.app/guest/${form?._id}`;
+            let link = `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${form?._id}`;
             if (process.env.NODE_ENV === 'development') {
                 link = `http://localhost:5000/guest/${form?._id}`;
             };
@@ -422,7 +422,7 @@ const Form = () => {
                 <div className="w-full">
                     <input
                         disabled
-                        value={process.env.NODE_ENV === 'development' ? `http://localhost:5000/guest/${form?._id}` : `https://form-flow-six.vercel.app/guest/${form?._id}`}
+                        value={process.env.NODE_ENV === 'development' ? `http://localhost:5000/guest/${form?._id}` : `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${form?._id}`}
                         className="w-full border-b outline-none py-2"
                     />
                 </div>
