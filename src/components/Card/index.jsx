@@ -5,6 +5,11 @@ import { Dropdown, Popover, Modal, Input, message } from 'antd';
 import { fireStore } from "@core/firebase/firebase";
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
+import { useNavigate } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+import { formPackage } from "@core/redux/actions";
+
 import IconForm from '@icon/iconForm.svg';
 import IconMore from '@icon/iconMore.svg';
 import IconTitle from '@icon/iconTitle.svg';
@@ -14,6 +19,9 @@ import IconNewTab from '@icon/iconNewTab.svg';
 const Card = (props) => {
 
     const { data, handleNavigateForm, getData } = props;
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [state, setState] = useState({
         isOpenContextMenu: false,
@@ -77,6 +85,12 @@ const Card = (props) => {
     };
     
     const handleOpenInNewTab = () => {
+        const isDev = process.env.NODE_ENV === 'development';
+        const link = isDev ? `http://localhost:5000/#/form/${data?._id}` : `https://antoanvesinhlaodong.vn/bieu-mau/#/form/${data?._id}`;
+
+        window.open(link, '_blank');
+
+        dispatch(formPackage(data));
         state.isOpenContextMenu = false,
         setState(prev => ({...prev}));
     };
