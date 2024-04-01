@@ -44,7 +44,7 @@ const Form = () => {
     useEffect(() => {
         if (Object.keys(form).length > 0) {
             const questions = [...form.questions];
-            const defaultAnswer = { value: questions.length + 1, label: 'Add option', img_url: ''};
+            const defaultAnswer = { value: 99, label: 'Add option', img_url: ''};
 
             questions.map((item) => {
                 if (item?.type_answer !== 'paragraph' && item?.answer?.[item?.answer?.length - 1]?.label !== 'Add option') {
@@ -70,7 +70,7 @@ const Form = () => {
 
         const defaultAnswer = [
             { value: 1, label: 'Option 1', img_url: '' },
-            { value: 2, label: 'Add option', img_url: ''},
+            { value: 99, label: 'Add option', img_url: ''},
         ];
 
         const item = {
@@ -78,6 +78,7 @@ const Form = () => {
             title: '',
             image_url: '',
             type_answer: 'choice',
+            dap_an: null,
             answer: defaultAnswer,
             textAnswer: '',
             isRequire: false,
@@ -91,7 +92,7 @@ const Form = () => {
     const handleAddBlock = (blockId) => {
         const defaultAnswer = [
             { value: 1, label: 'Option 1', img_url: '' },
-            { value: 2, label: 'Add option', img_url: ''},
+            { value: 99, label: 'Add option', img_url: ''},
         ];
 
         const newItem = {
@@ -99,6 +100,7 @@ const Form = () => {
             title: '',
             image_url: '',
             type_answer: 'choice',
+            dap_an: null,
             answer: defaultAnswer,
             textAnswer: '',
         };
@@ -137,8 +139,9 @@ const Form = () => {
     };
 
     // change question type
-    const handleChangeType = (value, id) => {
+    const handleChangeType = (value, id, type) => {
         const index = state.questions.findIndex(item => item._id === id);
+        state.questions[index].dap_an = type === 'choice' ? null : [];
         state.questions[index].type_answer = value;
         setState(prev => ({...prev}));
     };
@@ -225,6 +228,22 @@ const Form = () => {
         setState(prev => ({...prev}));
     };
 
+    const onChooseAnswer = (event, type, id) => {
+        const questions = [...state.questions];
+        const index = questions.findIndex(item => item._id === id);
+
+        state.questions[index].dap_an = type === 'choice' ? event.target.value : event;
+        setState(prev => ({...prev}));
+    };
+
+    const handleRemoveDapAn = (type, id) => {
+        const questions = [...state.questions];
+        const index = questions.findIndex(item => item._id === id);
+
+        state.questions[index].dap_an = type === 'choice' ? null : [];
+        setState(prev => ({...prev}));
+    };
+
     const handleRemoveBlock = (id) => {
         const index = state.questions.findIndex(item => item._id === id);
         state.questions.splice(index, 1);
@@ -257,7 +276,7 @@ const Form = () => {
         if (type === 'copy') {
             let link = `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${form?._id}`;
             if (process.env.NODE_ENV === 'development') {
-                link = `http://localhost:5000/guest/${form?._id}`;
+                link = `http://localhost:5000/#/guest/${form?._id}`;
             };
             navigator.clipboard.writeText(link).then(() => {
                 message.success("Copy successfully!")
@@ -363,6 +382,8 @@ const Form = () => {
                     handleRemoveBlock={handleRemoveBlock}
                     handleCopyBlock={handleCopyBlock}
                     handleRemoveQuestionImage={handleRemoveQuestionImage}
+                    onChooseAnswer={onChooseAnswer}
+                    handleRemoveDapAn={handleRemoveDapAn}
                 />
             ),
         },
@@ -422,7 +443,7 @@ const Form = () => {
                 <div className="w-full">
                     <input
                         disabled
-                        value={process.env.NODE_ENV === 'development' ? `http://localhost:5000/guest/${form?._id}` : `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${form?._id}`}
+                        value={process.env.NODE_ENV === 'development' ? `http://localhost:5000/#/guest/${form?._id}` : `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${form?._id}`}
                         className="w-full border-b outline-none py-2"
                     />
                 </div>

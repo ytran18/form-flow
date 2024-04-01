@@ -105,13 +105,14 @@ const Question = (props) => {
                                                 <img src={item?.img_url} className="w-[95%] max-h-[90%]"/>
                                             </div>
                                             <div className={`w-[268px]`}>
-                                                <Radio value={index + 1}>{item?.label}</Radio>
+                                                <Radio className={`${item?.value === question?.dap_an ? 'text-red-300' : ''}`} value={index + 1}>{item?.label}</Radio>
                                             </div>
                                         </div>
                                     ) : (
                                         <Radio
                                             key={`question-answer-guest-${index}`}
                                             value={index + 1}
+                                            className={`${item?.value === question?.dap_an ? 'font-bold' : ''}`}
                                         >
                                             {item?.label}
                                         </Radio>
@@ -161,6 +162,7 @@ const Question = (props) => {
                                         <Checkbox
                                             key={`question-answer-guest-${index}`}
                                             value={index + 1}
+                                            className={`${question?.dap_an?.includes(item?.value) ? 'font-bold' : ''}`}
                                         >
                                             {item?.label}
                                         </Checkbox>

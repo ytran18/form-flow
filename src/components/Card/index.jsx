@@ -3,24 +3,24 @@ import React, { useState } from "react";
 import { Dropdown, Popover, Modal, Input, message } from 'antd';
 
 import { fireStore } from "@core/firebase/firebase";
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
-
-import { useNavigate } from "react-router-dom";
+import { doc, updateDoc, deleteDoc, setDoc, collection } from 'firebase/firestore';
 
 import { useDispatch } from "react-redux";
 import { formPackage } from "@core/redux/actions";
+
+import { v4 as uuidv4 } from 'uuid';
 
 import IconForm from '@icon/iconForm.svg';
 import IconMore from '@icon/iconMore.svg';
 import IconTitle from '@icon/iconTitle.svg';
 import IconTrash from '@icon/iconTrash.svg';
 import IconNewTab from '@icon/iconNewTab.svg';
+import IconCopy from '@icon/iconCopy.svg';
 
 const Card = (props) => {
 
     const { data, handleNavigateForm, getData } = props;
 
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [state, setState] = useState({
@@ -44,8 +44,14 @@ const Card = (props) => {
             onClick: () => handleRemove(),
         },
         {
-            label: 'Open in new tab',
+            label: 'Clone',
             key: '3',
+            icon: <IconCopy className="scale-75" />,
+            onClick: () => handleClone(),
+        },
+        {
+            label: 'Open in new tab',
+            key: '4',
             icon: <IconNewTab />,
             onClick: () => handleOpenInNewTab(),
         },
@@ -82,6 +88,20 @@ const Card = (props) => {
         };
 
         setState(prev => ({...prev}));
+    };
+
+    const handleClone = async () => {
+        const cloneId = uuidv4();
+        const rs = {
+            ...data,
+            _id: cloneId,
+            formTitle: data?.formTitle + ' ' + 'Cloned',
+            mordified_at: new Date().toLocaleString(),
+        };
+
+        const docRef = doc(collection(fireStore, 'forms'), rs._id);
+        await setDoc(docRef, rs);
+        getData();
     };
     
     const handleOpenInNewTab = () => {

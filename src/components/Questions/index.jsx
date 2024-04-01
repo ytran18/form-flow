@@ -11,7 +11,7 @@ const Questions = (props) => {
     const { questions, formTitle, formDescription, isScroll } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, onChangeFormTitle, onChangeFormDescription, handleRequire } = props;
     const { handleUploadQuestionImage, handleChangeAnswerIndex, handleRemoveAnswer, handleImageAnwer, handleDeleteImageAnswer } = props;
-    const { handleInputClickAnswer, handleCopyBlock, handleRemoveBlock, handleRemoveQuestionImage } = props;
+    const { handleInputClickAnswer, handleCopyBlock, handleRemoveBlock, handleRemoveQuestionImage, onChooseAnswer, handleRemoveDapAn } = props;
 
     const onInput = (e) => {
         const element = e.target;
@@ -63,6 +63,8 @@ const Questions = (props) => {
                             handleRemoveBlock={handleRemoveBlock}
                             handleCopyBlock={handleCopyBlock}
                             handleRemoveQuestionImage={handleRemoveQuestionImage}
+                            onChooseAnswer={onChooseAnswer}
+                            handleRemoveDapAn={handleRemoveDapAn}
                         />
                     </div>
                 )

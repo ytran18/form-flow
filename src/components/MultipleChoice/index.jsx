@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Radio, Space, Upload, Spin } from 'antd';
+import { Radio, Space, Upload, Spin, Checkbox } from 'antd';
 
 import IconImage from '@icon/iconImage.svg';
 import IconTrash from '@icon/iconTrash.svg';
@@ -10,14 +10,17 @@ import './style.css';
 
 const MultipleChoice = (props) => {
 
-    const { answer, questionId } = props;
-    const { handleRemoveAnswer, handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer } = props;
+    const { answer, questionId, type, dap_an } = props;
+    const { handleRemoveAnswer, handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer, onChooseAnswer, handleRemoveDapAn } = props;
 
     const [state, setState] = useState({
         activeValue: 1,
         loading: true,
     });
 
+    const GroupType = type === 'choice' ? Radio : Checkbox;
+    const isVisibleRemoveText = type === 'choice' ? dap_an !== null : dap_an?.length > 0;
+    
     const getBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -43,11 +46,22 @@ const MultipleChoice = (props) => {
 
     return (
         <div className="w-full">
-            <Radio.Group className="w-full" size="large" value={null}>
+            <GroupType.Group
+                className="w-full"
+                size="large"
+                value={dap_an}
+                onChange={(event) => onChooseAnswer(event, type, questionId)}
+            >
                 <Space className="w-full" direction="vertical">
                     {answer.length > 0 && answer.map((item, index) => (
                         <div className="w-full flex justify-center flex-col gap-5" key={`answer-${index}`}>
-                            <Radio size="large" className="flex items-center" key={index} value={item.value}>
+                            <GroupType
+                                size="large"
+                                className="flex items-center"
+                                key={index}
+                                disabled={item.value === 99}
+                                value={item.value}
+                            >
                                 <input
                                     type="text"
                                     onClick={() => handleInputClick(item.label, item.value)}
@@ -74,7 +88,7 @@ const MultipleChoice = (props) => {
                                         onClick={() => handleRemoveAnswer(item.value, questionId)}
                                     />
                                 )}
-                            </Radio>
+                            </GroupType>
                             {item.img_url.length > 0 && (
                                 <div className="relative w-fit h-fit">
                                     {state.loading && (
@@ -100,7 +114,17 @@ const MultipleChoice = (props) => {
                         </div>
                     ))}
                 </Space>
-            </Radio.Group>
+            </GroupType.Group>
+            {isVisibleRemoveText && (
+                <div className="w-full flex justify-end">
+                    <div
+                        className="cursor-pointer py-1 px-5 hover:bg-[rgb(249,249,249)]"
+                        onClick={() => handleRemoveDapAn(type, questionId)}
+                    >
+                        Xóa lựa chọn
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

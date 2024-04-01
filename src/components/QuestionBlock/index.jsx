@@ -18,7 +18,7 @@ const QuestionBlock = (props) => {
     const { question, isScroll } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, handleRequire, handleUploadQuestionImage, handleRemoveAnswer } = props;
     const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer, handleRemoveBlock, handleCopyBlock } = props;
-    const { handleRemoveQuestionImage } = props;
+    const { handleRemoveQuestionImage, onChooseAnswer, handleRemoveDapAn } = props;
 
     const [state, setState] = useState({
         isLoading: true,
@@ -88,11 +88,15 @@ const QuestionBlock = (props) => {
                     <MultipleChoice
                         questionId={question._id}
                         answer={question.answer}
+                        type={question.type_answer}
+                        dap_an={question?.dap_an}
                         handleRemoveAnswer={handleRemoveAnswer}
                         handleChangeAnswerIndex={handleChangeAnswerIndex}
                         handleImageAnwer={handleImageAnwer}
                         handleDeleteImageAnswer={handleDeleteImageAnswer}
                         handleInputClickAnswer={handleInputClickAnswer}
+                        onChooseAnswer={onChooseAnswer}
+                        handleRemoveDapAn={handleRemoveDapAn}
                     />
                 );
             case 'choice':
@@ -100,11 +104,15 @@ const QuestionBlock = (props) => {
                     <MultipleChoice
                         questionId={question._id}
                         answer={question.answer}
+                        type={question.type_answer}
+                        dap_an={question?.dap_an}
                         handleRemoveAnswer={handleRemoveAnswer}
                         handleChangeAnswerIndex={handleChangeAnswerIndex}
                         handleImageAnwer={handleImageAnwer}
                         handleDeleteImageAnswer={handleDeleteImageAnswer}
                         handleInputClickAnswer={handleInputClickAnswer}
+                        onChooseAnswer={onChooseAnswer}
+                        handleRemoveDapAn={handleRemoveDapAn}
                     />
                 );
             case 'dropdown':
@@ -122,11 +130,15 @@ const QuestionBlock = (props) => {
                     <MultipleChoice
                         questionId={question._id}
                         answer={question.answer}
+                        type={question.type_answer}
+                        dap_an={question?.dap_an}
                         handleRemoveAnswer={handleRemoveAnswer}
                         handleChangeAnswerIndex={handleChangeAnswerIndex}
                         handleImageAnwer={handleImageAnwer}
                         handleDeleteImageAnswer={handleDeleteImageAnswer}
                         handleInputClickAnswer={handleInputClickAnswer}
+                        onChooseAnswer={onChooseAnswer}
+                        handleRemoveDapAn={handleRemoveDapAn}
                     />
                 );
         };
@@ -165,7 +177,7 @@ const QuestionBlock = (props) => {
                     <Select
                         className="w-full"
                         value={question.type_answer}
-                        onChange={(value) => handleChangeType(value, question._id)}
+                        onChange={(value) => handleChangeType(value, question._id, question.type_answer)}
                         defaultValue={typeAnswers[2].value}
                         options={typeAnswers}
                     />
