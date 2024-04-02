@@ -121,6 +121,7 @@ const Responses = (props) => {
             const birthday = item?.assignee?.birthday;
             const cccd = item?.assignee?.cccd;
             const cong_ty = item?.assignee?.company;
+            const cccd_font_pic = item?.assignee?.cccd_font_pic;
 
             let obj = {};
             answerValue.map((item, index) => {
@@ -131,6 +132,7 @@ const Responses = (props) => {
                 'Tên': name,
                 'Ngày sinh': birthday,
                 'Căn cước công dân': cccd,
+                'Ảnh mặt trước cccd': cccd_font_pic,
                 'Công ty': cong_ty,
                 ...obj,
             })

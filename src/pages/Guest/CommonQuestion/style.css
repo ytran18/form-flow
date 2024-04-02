@@ -1,0 +1,12 @@
+.anticon-paper-clip {
+    color: black !important;
+    opacity: 0.45;
+}
+
+.ant-upload-list-item-name {
+    color: #1677ff !important;
+}
+
+.guest-common .ant-tooltip {
+    display: none !important;
+}

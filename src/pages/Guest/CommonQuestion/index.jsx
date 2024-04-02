@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 
-import { DatePicker, Button, message, Select } from 'antd';
+import { DatePicker, Button, message, Select, Upload } from 'antd';
+import { DeleteOutlined, InboxOutlined } from '@ant-design/icons';
 
 import { useDispatch } from "react-redux";
 import { assigneePackage } from "@core/redux/actions";
+
+const { Dragger } = Upload;
+
+import './style.css';
 
 const CommonQuestion = (props) => {
 
@@ -17,7 +22,8 @@ const CommonQuestion = (props) => {
             year: ''
         },
         cccd: '',
-        company: ''
+        company: '',
+        file: [],
     });
 
     const dispatch = useDispatch();
@@ -115,7 +121,7 @@ const CommonQuestion = (props) => {
     };
 
     const handleNext = () => {
-        if (!state.name || !state.birthday.date || !state.birthday.month || !state.birthday.year || !state.cccd) {
+        if (!state.name || !state.birthday.date || !state.birthday.month || !state.birthday.year || !state.cccd || state.file.length === 0) {
             message.error('Hãy nhập đầy đủ thông tin!', 3);
             return;
         };
@@ -125,6 +131,7 @@ const CommonQuestion = (props) => {
             birthday: `${state.birthday.date}-${state.birthday.month}-${state.birthday.year}`,
             cccd: state.cccd,
             company: state.company,
+            cccd_font_pic: state.file[0].originFileObj,
         };
 
         dispatch(assigneePackage(rs));
@@ -133,8 +140,21 @@ const CommonQuestion = (props) => {
 
     const options = state.birthday.month != '2' ? fullDates.includes(state.birthday.month) ? days31 : days30 : isLeapYear(state.birthday.year) ? days29 : days28;
 
+    const uploadProps = {
+        name: 'file',
+        multiple: false,
+        action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+        onChange(info) {
+            setState(prev => ({...prev, file: [info.file]}))
+        },
+        onDrop(e) {
+          console.log('Dropped files', e.dataTransfer.files);
+        },
+        fileList: state.file,
+    };
+
     return (
-        <div className="w-full flex flex-col gap-5">
+        <div className="w-full flex flex-col gap-5 guest-common">
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Họ tên: <span className="text-red-500">*</span></div>
@@ -189,6 +209,20 @@ const CommonQuestion = (props) => {
                         />
                     </div>
                 </div>
+                <div className="px-5">
+                </div>
+            </div>
+            <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
+                <div className="px-5 flex flex-col gap-5">
+                    <div className="font-medium">Hình ảnh mặc trước căn cước công dân: <span className="text-red-500">*</span></div>
+                </div>
+                <Dragger {...uploadProps}>
+                    <p className="ant-upload-drag-icon"> <InboxOutlined /> </p>
+                    <p className="ant-upload-text">Click hoặc kéo tệp vào khu vực này để tải lên.</p>
+                    <p className="ant-upload-hint">
+                        Hỗ trợ tải lên đơn lẻ. Cấm nghiêm ngặt tải lên dữ liệu của công ty hoặc các tệp bị cấm khác.
+                    </p>
+                </Dragger>
                 <div className="px-5">
                 </div>
             </div>

@@ -4,8 +4,9 @@ import { Radio, Button, message } from 'antd';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { fireStore } from "@core/firebase/firebase";
+import { fireStore, storage } from "@core/firebase/firebase";
 import { doc, collection, setDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import { useAssigneePackageHook } from "@core/redux/hooks";
 
@@ -56,6 +57,18 @@ const Assignment = (props) => {
         setState(prev => ({...prev}));
     };
 
+    const handleUploadCCCD = async (url) => {
+        const imageRef = ref(storage, `images/${url.uid}`);
+        try {
+            const snapshot = await uploadBytes(imageRef, url);
+            const downloadUrl = await getDownloadURL(imageRef);
+            return downloadUrl;
+        } catch (error) {
+            console.error('Error handling CCCD upload:', error);
+            throw error;
+        }
+    };
+
     const handleSend = async () => {
         if (state.isInfo === null) {
             message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
@@ -69,14 +82,22 @@ const Assignment = (props) => {
             };
         };
 
-        const rs = {
-            _id: uuidv4(),
-            formId: form?._id,
-            answers: state.answers, 
-            assignee: assignee,
-            modified_at: Math.floor(new Date().getTime() / 1000)
-        };
         try {
+            const cccd_font_pic = await handleUploadCCCD(assignee.cccd_font_pic);
+            
+            const user_answer = {
+                ...assignee,
+                cccd_font_pic: cccd_font_pic,
+            };
+            
+            const rs = {
+                _id: uuidv4(),
+                formId: form?._id,
+                answers: state.answers, 
+                assignee: user_answer,
+                modified_at: Math.floor(new Date().getTime() / 1000)
+            };
+
             const docRef = doc(collection(fireStore, 'answers'), rs._id);
             await setDoc(docRef, rs);
             message.success('Send answer successfully', 3);
