@@ -1,0 +1,68 @@
+.ant-table-column-title {
+    font-size: 13px !important;
+}
+
+.ant-table-cell {
+    font-size: 13px !important;
+}
+
+.ant-table-tbody .ant-table-row .ant-table-cell:nth-child(1) {
+    min-width: 20% !important;
+    max-width: 20% !important;
+    width: 20% !important;
+}
+
+.ant-table-tbody .ant-table-row .ant-table-cell:nth-child(2) {
+    min-width: 10% !important;
+    max-width: 10% !important;
+    width: 10% !important;
+}
+
+.ant-table-tbody .ant-table-row .ant-table-cell:nth-child(3) {
+    min-width: 35% !important;
+    max-width: 35% !important;
+    width: 35% !important;
+}
+
+.ant-table-tbody .ant-table-row .ant-table-cell:nth-child(4) {
+    min-width: 15% !important;
+    max-width: 15% !important;
+    width: 15% !important;
+}
+
+.ant-table-tbody .ant-table-row .ant-table-cell:last-child {
+    min-width: 10% !important;
+    max-width: 10% !important;
+    width: 10% !important;
+}
+
+.ant-modal-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ant-modal {
+    top: 0 !important;
+}
+
+.ant-table-wrapper {
+    display: flex;
+}
+
+.ant-spin-nested-loading {
+    display: flex;
+    width: 100%;
+}
+
+.ant-spin-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.ant-table {
+    flex-grow: 1;
+    width: 100%;
+}

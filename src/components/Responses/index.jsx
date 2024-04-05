@@ -3,14 +3,12 @@ import React, { useEffect, useState } from "react";
 import { fireStore } from "@core/firebase/firebase";
 import { collection, getDocs, query, where } from 'firebase/firestore';
 
-import { Switch } from 'antd';
+import { Switch, Modal } from 'antd';
 
-import * as FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
+import ListResponse from "./ListResponse";
+import DetailResponse from "./DetailResponse";
 
-import IconDownload from '@icon/iconDownload.svg';
-
-const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+import IconView from '@icon/iconView.svg';
 
 const Responses = (props) => {
 
@@ -20,6 +18,15 @@ const Responses = (props) => {
         isToggle: true,
         answers: [],
         dates: [],
+        isViewModal: false,
+        dateOpen: '',
+        selectedUsers: [],
+        selectedAssignee: [],
+        detailUser: {},
+        isDetailTab: false,
+        detailAnswer: {},
+        searchValue: [],
+        searchText: '',
     });
 
     function unixTimeToDateString(unixTime) {
@@ -72,77 +79,116 @@ const Responses = (props) => {
         getData();
     },[]);
 
-    // const onToggleChange = (checked) => {
-    //     state.isToggle = checked;
-    //     setState(prev => ({...prev}));
-    // };
+    const unixTimeToFormattedTime = (unixTime) => {
+        const date = new Date(unixTime * 1000);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? ' PM' : ' AM';
+        const formattedHours = hours % 12 || 12;
+        const formattedTime = `${formattedHours}:${minutes.toString().padStart(2, '0')}${ampm}`;
+        return formattedTime;
+    }
 
-    const handleDownloadExcel = (date) => {
-        const table = [];
+    const formatName = (name) => {
+        if (typeof name !== 'string') return;
+
+        const arr = name.trim().toLowerCase().split(' ');
+        const format = arr.map(item => item.charAt(0).toUpperCase() + item.slice(1));
+        return format.join(' ');
+    };
+
+    const onSearch = (event) => {
+        const arr = [...state.selectedAssignee];
+        const searchValue = event?.target?.value?.toLowerCase();
+        const results = [];
+        arr.map((item) => {
+            if (item?.name?.toLowerCase()?.includes(searchValue) || item?.cccd?.includes(searchValue)) {
+                results.push(item);
+            };
+        });
+
+        state.searchValue = results;
+        state.searchText = searchValue;
+        setState(prev => ({...prev}));
+    };
+
+    const handleViewItem = (date) => {
         const users = state.dates[date];
-        users.map((item) => {
-            const answer = item.answers;
-            let answerValue = new Array(answer?.length).fill(null);
+        const assignee = [];
 
-            answer.map((item) => {
-                const index = form?.questions?.findIndex(ele => ele?._id === item?.questionId);
-                const type_question = item?.type_question;
-    
-                if (type_question === "choice" || type_question === 'dropdown') {
+        users.map((item) => {
+            assignee.push({
+                ...item?.assignee,
+                name: formatName(item?.assignee?.name),
+                _id: item?._id,
+                modified_at: unixTimeToFormattedTime(item?.modified_at),
+            });
+        });
+
+        state.selectedAssignee = assignee;
+        state.selectedUsers = users;
+        state.isViewModal = !state.isViewModal;
+        state.dateOpen = date;
+        setState(prev => ({...prev}));
+    };
+
+    const onDetailItem = (id, date) => {
+        const user = state.dates[date].find(item => item?._id === id);
+
+        const answer = user?.answers;
+        let answerValue = new Array(answer?.length).fill(null);
+
+        answer.map((item) => {
+            const index = form?.questions?.findIndex(ele => ele?._id === item?.questionId);
+            const type_question = item?.type_question;
+
+            if (type_question === "choice" || type_question === 'dropdown') {
+                form?.questions?.[index]?.answer?.map((ans) => {
+                    if (ans?.value === item?.value && item?.label !== 'Add option') {
+                        answerValue[index] = ans?.label;
+                    };
+                });
+            };
+
+            if (type_question === 'paragraph') {
+                answerValue[index] = item.value;
+            };
+
+            if (type_question === 'multiple-choice') {
+                if (!answerValue[index]) {
+                    answerValue[index] = '';
+                };
+                for (let i = 0; i < item?.value?.length; i++) {
                     form?.questions?.[index]?.answer?.map((ans) => {
-                        if (ans?.value === item?.value && item?.label !== 'Add option') {
-                            answerValue[index] = ans?.label;
+                        if (ans?.value === item?.value[i] && item?.label !== 'Add option') {
+                            if (answerValue[index] === '') {
+                                answerValue[index] += `${ans?.label}`;
+                            } else {
+                                answerValue[index] += `, ${ans?.label}`;
+                            };
                         };
                     });
                 };
-    
-                if (type_question === 'paragraph') {
-                    answerValue[index] = item.value;
-                };
-    
-                if (type_question === 'multiple-choice') {
-                    if (!answerValue[index]) {
-                        answerValue[index] = '';
-                    };
-                    for (let i = 0; i < item?.value?.length; i++) {
-                        form?.questions?.[index]?.answer?.map((ans) => {
-                            if (ans?.value === item?.value[i] && item?.label !== 'Add option') {
-                                if (answerValue[index] === '') {
-                                    answerValue[index] += `${ans?.label}`;
-                                } else {
-                                    answerValue[index] += `, ${ans?.label}`;
-                                };
-                            };
-                        });
-                    };
-                };
-            });
-            const name = item?.assignee?.name;
-            const birthday = item?.assignee?.birthday;
-            const cccd = item?.assignee?.cccd;
-            const cong_ty = item?.assignee?.company;
-            const cccd_font_pic = item?.assignee?.cccd_font_pic;
-
-            let obj = {};
-            answerValue.map((item, index) => {
-                obj[`Câu ${index + 1}`] = item;
-            });
-
-            table.push({
-                'Tên': name,
-                'Ngày sinh': birthday,
-                'Căn cước công dân': cccd,
-                'Ảnh mặt trước cccd': cccd_font_pic,
-                'Công ty': cong_ty,
-                ...obj,
-            })
+            };
         });
 
-        const ws = XLSX.utils.json_to_sheet(table);
-        const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
-        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const data = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(data, `${form?.formTitle}.xlsx`);
+        let obj = {};
+        form?.questions.map((item, index) => {
+            obj[`${item?.title}`] = answerValue[index];
+        });
+
+        state.detailAnswer = obj;
+        state.detailUser = user;
+        state.isDetailTab = true;
+        setState(prev => ({...prev}));
+    };
+
+    const handleNavigateBack = () => {
+        state.isDetailTab = false;
+        state.detailAnswer = {};
+        state.detailUser = {};
+
+        setState(prev => ({...prev}));
     };
 
     return (
@@ -177,9 +223,9 @@ const Responses = (props) => {
                                     <div className="">{state.dates[item]?.length}</div>
                                 </div>
                                 <div className="">
-                                    <IconDownload
+                                    <IconView
                                         className="cursor-pointer"
-                                        onClick={() => handleDownloadExcel(item)}
+                                        onClick={() => handleViewItem(item)}
                                     />
                                 </div>
                             </div>
@@ -187,6 +233,31 @@ const Responses = (props) => {
                     })}
                 </div>
             </div>
+            <Modal
+                className="!w-[900px]"
+                open={state.isViewModal}
+                closeIcon={false}
+                onCancel={() => setState(prev => ({...prev, isViewModal: false, detailAnswer: {}, detailUser: {}, isDetailTab: false}))}
+                footer={[]}
+            >
+                {state.isDetailTab ? (
+                    <DetailResponse
+                        detailUser={state.detailUser}
+                        detailAnswer={state.detailAnswer}
+                        handleNavigateBack={handleNavigateBack}
+                    />
+                ) : (
+                    <ListResponse
+                        title={`Danh sách phản hồi: ${state.dateOpen}`}
+                        date={state.dateOpen}
+                        listUsers={state.selectedAssignee}
+                        searchValue={state.searchValue}
+                        searchText={state.searchText}
+                        onDetailItem={onDetailItem}
+                        onSearch={onSearch}
+                    />
+                )}
+            </Modal>
         </div>
     );
 };
