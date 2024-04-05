@@ -219,7 +219,7 @@ const Responses = (props) => {
                         return (
                             <div key={`user-complete-${index}`} className="w-full flex items-center justify-between">
                                 <div className="flex items-center">
-                                    <div className="w-64">{item}</div>
+                                    <div className="w-40 md:w-64">{item}</div>
                                     <div className="">{state.dates[item]?.length}</div>
                                 </div>
                                 <div className="">
@@ -236,8 +236,7 @@ const Responses = (props) => {
             <Modal
                 className="!w-[900px]"
                 open={state.isViewModal}
-                closeIcon={false}
-                onCancel={() => setState(prev => ({...prev, isViewModal: false, detailAnswer: {}, detailUser: {}, isDetailTab: false}))}
+                onCancel={() => setState(prev => ({...prev, isViewModal: false, detailAnswer: {}, detailUser: {}, isDetailTab: false, selectedAssignee: []}))}
                 footer={[]}
             >
                 {state.isDetailTab ? (

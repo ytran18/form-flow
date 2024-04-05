@@ -31,6 +31,7 @@ const Questions = (props) => {
                         value={formTitle}
                         placeholder="Form title"
                         onChange={onChangeFormTitle}
+                        style={{ wordWrap: 'break-word', whiteSpace: 'pre-line' }}
                         className="outline-none border-none text-3xl w-full"
                     />
                 </div>

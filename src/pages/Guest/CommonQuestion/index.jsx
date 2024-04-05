@@ -126,6 +126,13 @@ const CommonQuestion = (props) => {
             return;
         };
 
+        const date = state.birthday.date;
+        const month = state.birthday.month;
+        if (date === 'Ngày' || month === 'Tháng') {
+            message.error('Hãy nhập đầy đủ thông tin!', 3);
+            return;
+        };
+
         const rs = {
             name: state.name,
             birthday: `${state.birthday.date}-${state.birthday.month}-${state.birthday.year}`,

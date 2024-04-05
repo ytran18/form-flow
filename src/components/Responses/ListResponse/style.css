@@ -66,3 +66,7 @@
     flex-grow: 1;
     width: 100%;
 }
+
+.ant-modal-close {
+    top: 4px !important;
+}

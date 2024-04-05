@@ -21,7 +21,6 @@ const DetailResponse = (props) => {
 
     useEffect(() => {
         const element = document.getElementById('cccd-img');
-        console.log(element);
 
         if (iw > 768) {
             element.style.display = 'block';
@@ -38,10 +37,12 @@ const DetailResponse = (props) => {
                     className="cursor-pointer"
                     onClick={handleNavigateBack}
                 />
-                <div className="text-base font-semibold">
-                    {`${detailUser?.assignee?.name} - ${detailUser?.assignee?.cccd}`}
+                <div className="text-base font-semibold flex flex-col md:flex-row">
+                    <span>{`${detailUser?.assignee?.name} `}</span>
+                    <span className="hidden md:block">&nbsp;-&nbsp;</span>
+                    <span>{` ${detailUser?.assignee?.cccd}`}</span>
                 </div>
-                <div className="absolute top-0 right-0">
+                <div className="absolute top-3 right-0">
                     <div className="w-[200px] h-[150px] flex justify-end">
                         <Button className="md:hidden bg-[rgb(103,58,183)]" type="primary" onClick={() => setVisible(true)}>
                             CCCD

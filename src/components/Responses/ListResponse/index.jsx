@@ -75,7 +75,7 @@ const ListResponse = (props) => {
     },[iw])
 
     return (
-        <div className="w-full min-h-[84vh] max-h-[84vh] flex flex-col gap-4">
+        <div className="w-full min-h-[84vh] pt-5 max-h-[84vh] flex flex-col gap-4">
             <div className="w-full flex items-center justify-between">
                 <div className="text-[16px] font-semibold w-full">{title}</div>
                 <Search

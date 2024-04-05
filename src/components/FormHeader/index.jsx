@@ -44,7 +44,9 @@ const FormHeader = (props) => {
                 className="flex items-center gap-3 w-1/2"
                 onClick={handleNavigate}
             >
-                <IconForm className="cursor-pointer"/>
+                <div className="w-[32px]">
+                    <IconForm className="cursor-pointer"/>
+                </div>
                 <div className="font-semibold text-xl truncate">{form?.formTitle || 'Untitled form'}</div>
             </div>
             <div className="flex items-center gap-4">

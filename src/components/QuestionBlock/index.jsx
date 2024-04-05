@@ -154,33 +154,35 @@ const QuestionBlock = (props) => {
             id={question._id}
             className="bg-white w-full min-h-fit max-h-fit rounded-lg border-[1px] flex flex-col px-8 py-4 gap-5"
         >
-            <div className="w-full flex gap-10">
+            <div className="w-full flex flex-col md:flex-row gap-10">
                 <textarea
                     value={question.title}
                     onInput={onInput} 
                     id="question-title"
                     placeholder="Question"
-                    className="w-[400px] tracking-wide min-h-[57px] overflow-hidden max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
+                    className="w-full md:w-[400px] tracking-wide min-h-[57px] overflow-hidden max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
                     onChange={(e) => onChangeQuestionTitle(e, question._id)}
                 />
-                <div className="flex">
-                    <Upload
-                        action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                        listType="picture"
-                        showUploadList={false}
-                        onChange={onUploadChange}
-                    >
-                        <IconImage className="cursor-pointer"/>
-                    </Upload>
-                </div>
-                <div className="flex-grow">
-                    <Select
-                        className="w-full"
-                        value={question.type_answer}
-                        onChange={(value) => handleChangeType(value, question._id, question.type_answer)}
-                        defaultValue={typeAnswers[2].value}
-                        options={typeAnswers}
-                    />
+                <div className="flex flex-grow justify-between gap-10">
+                    <div className="flex">
+                        <Upload
+                            action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                            listType="picture"
+                            showUploadList={false}
+                            onChange={onUploadChange}
+                        >
+                            <IconImage className="cursor-pointer"/>
+                        </Upload>
+                    </div>
+                    <div className="flex-grow">
+                        <Select
+                            className="w-full"
+                            value={question.type_answer}
+                            onChange={(value) => handleChangeType(value, question._id, question.type_answer)}
+                            defaultValue={typeAnswers[2].value}
+                            options={typeAnswers}
+                        />
+                    </div>
                 </div>
             </div>
             {question?.image_url?.length > 0 && (
