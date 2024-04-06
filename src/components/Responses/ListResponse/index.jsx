@@ -85,13 +85,11 @@ const ListResponse = (props) => {
             </div>
             <Table
                 columns={columns}
-                
                 size="small"
                 dataSource={searchText?.length > 0 ? searchValue : listUsers}
                 className="overflow-y-auto flex-grow"
                 tableLayout="5"
                 sticky={true}
-                
                 pagination={{
                     hideOnSinglePage: true,
                     pageSize: 50

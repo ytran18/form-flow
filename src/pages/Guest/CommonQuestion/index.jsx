@@ -10,6 +10,8 @@ const { Dragger } = Upload;
 
 import './style.css';
 
+const acceptedImageTypes = ['image/png', 'image/jpeg', 'image/gif'];
+
 const CommonQuestion = (props) => {
 
     const { handleNextStep } = props;
@@ -156,6 +158,13 @@ const CommonQuestion = (props) => {
         },
         onDrop(e) {
           console.log('Dropped files', e.dataTransfer.files);
+        },
+        beforeUpload: (file) => {
+            const isPNG = acceptedImageTypes.includes(file.type);
+            if (!isPNG) {
+              message.error(`Chỉ chấp nhận các định dạng hình ảnh: png, jpeg, jpg`);
+            };
+            return isPNG || Upload.LIST_IGNORE;
         },
         fileList: state.file,
     };
