@@ -154,6 +154,12 @@ const CommonQuestion = (props) => {
         multiple: false,
         action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
         onChange(info) {
+            if (info.file.status === "removed") {
+                state.file = [];
+                setState(prev => ({...prev}));
+                return;
+            };
+
             setState(prev => ({...prev, file: [info.file]}))
         },
         onDrop(e) {
