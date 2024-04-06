@@ -1,6 +1,6 @@
-import React, { Fragment, useEffect } from "react";
+import React from "react";
 
-import { BrowserRouter, Routes, Route, HashRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import AppRoutes from "./routes.js";
 
 import './App.css';

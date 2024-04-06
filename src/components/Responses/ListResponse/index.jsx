@@ -85,12 +85,17 @@ const ListResponse = (props) => {
             </div>
             <Table
                 columns={columns}
+                
                 size="small"
                 dataSource={searchText?.length > 0 ? searchValue : listUsers}
                 className="overflow-y-auto flex-grow"
                 tableLayout="5"
                 sticky={true}
-                pagination={listUsers?.length <= 10 ? false : true }
+                
+                pagination={{
+                    hideOnSinglePage: true,
+                    pageSize: 50
+                }}
                 onRow={(record, rowIndex) => {
                     return {
                       onClick: () => onDetailItem(record?._id, date),

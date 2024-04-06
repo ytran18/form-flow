@@ -134,7 +134,6 @@ const Card = (props) => {
                     <div className="w-full flex items-center justify-between">
                         <div className="flex items-center gap-1">
                             <IconForm className="transform scale-75"/>
-                            {/* <div className="text-xs">Opened 5:14 PM</div> */}
                             <div className="text-[11px]">{data?.mordified_at}</div>
                         </div>
                         <div id="context-memu-icon" className="p-1 hover:bg-[rgb(218,220,224)] rounded-full">

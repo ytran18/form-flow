@@ -31,7 +31,7 @@ const DetailResponse = (props) => {
     },[iw]);
 
     return (
-        <div className="w-full h-[80vh] flex flex-col gap-10">
+        <div className="w-full h-[84vh] pt-5 flex flex-col gap-10">
             <div className="flex items-center gap-3 w-full relative">
                 <IconBack
                     className="cursor-pointer"
