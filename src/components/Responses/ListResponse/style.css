@@ -70,3 +70,8 @@
 .ant-modal-close {
     top: 4px !important;
 }
+
+.ant-picker-ok button {
+    background-color: rgb(103,58,183) !important;
+    color: white !important;
+}

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import { Input, Table } from "antd";
+import { Input, Table, TimePicker } from "antd";
 
 import useWindowSize from "../../../hooks/useWindowSize";
 import { VSO } from "@utils/function";
@@ -11,7 +11,8 @@ import './style.css';
 
 const ListResponse = (props) => {
 
-    const { title, listUsers, onDetailItem, date, onSearch, searchValue, searchText } = props;
+    const { title, listUsers, onDetailItem, date, onSearch, searchValue, searchText, dateSearch } = props;
+    console.log(searchText,dateSearch);
 
     const iw = useWindowSize().width;
 
@@ -72,21 +73,47 @@ const ListResponse = (props) => {
                 },
             ],
         })
-    },[iw])
+    },[iw]);
+
+    const handleSearch = (searchEvent, dates) => {
+        onSearch(searchEvent, dates)
+    };
 
     return (
         <div className="w-full min-h-[84vh] pt-5 max-h-[84vh] flex flex-col gap-4">
-            <div className="w-full flex items-center justify-between">
-                <div className="text-[16px] font-semibold w-full">{title}</div>
-                <Search
-                    placeholder="Tìm kiếm"
-                    onChange={onSearch}
-                />
+            <div className="w-full flex-col ml:flex-row flex items-center gap-5">
+                <div className="text-[16px] font-semibold w-full ml:w-auto">{title}</div>
+                <div className="flex flex-grow ml:justify-end items-center gap-3 w-full ml:w-auto">
+                    <Search
+                        placeholder="Tìm kiếm"
+                        className="w-[50%]"
+                        onChange={(event) => handleSearch(event.target.value, dateSearch)}
+                    />
+                    <TimePicker.RangePicker
+                        format={"HH:mm"}
+                        needConfirm={true}
+                        className="flex-grow ml:flex-grow-0 !h-8"
+                        showNow
+                        placeholder={["Bắt đầu", "Kết thúc"]}
+                        changeOnScroll
+                        onChange={(dates) => handleSearch(searchText, dates)}
+                    />
+                </div>
             </div>
             <Table
                 columns={columns}
                 size="small"
-                dataSource={searchText?.length > 0 ? searchValue : listUsers}
+                dataSource={(searchText.length > 0 || dateSearch !== null) ? searchValue?.map((item) => {
+                    return {
+                        ...item,
+                        modified_at: item?.modified_at?.formattedTime
+                    }
+                }) : listUsers?.map((item) => {
+                    return {
+                        ...item,
+                        modified_at: item?.modified_at?.formattedTime
+                    }
+                })}
                 className="overflow-y-auto flex-grow"
                 tableLayout="5"
                 sticky={true}

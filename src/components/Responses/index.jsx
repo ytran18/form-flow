@@ -27,6 +27,7 @@ const Responses = (props) => {
         detailAnswer: {},
         searchValue: [],
         searchText: '',
+        dateSearch: null,
     });
 
     function unixTimeToDateString(unixTime) {
@@ -83,10 +84,8 @@ const Responses = (props) => {
         const date = new Date(unixTime * 1000);
         const hours = date.getHours();
         const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? ' PM' : ' AM';
-        const formattedHours = hours % 12 || 12;
-        const formattedTime = `${formattedHours}:${minutes.toString().padStart(2, '0')}${ampm}`;
-        return formattedTime;
+        const formattedTime = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2, '0')}`;
+        return {formattedTime, unixTime};
     }
 
     const formatName = (name) => {
@@ -97,17 +96,45 @@ const Responses = (props) => {
         return format.join(' ');
     };
 
-    const onSearch = (event) => {
-        const arr = [...state.selectedAssignee];
-        const searchValue = event?.target?.value?.toLowerCase();
-        const results = [];
-        arr.map((item) => {
-            if (item?.name?.toLowerCase()?.includes(searchValue) || item?.cccd?.includes(searchValue)) {
-                results.push(item);
-            };
-        });
+    const setTime = (date, year, month, day) => {
+        date.setFullYear(year);
+        date.setMonth(month - 1);
+        date.setDate(day);
+        return date;
+    };
 
-        state.searchValue = results;
+    const onSearch = (event, dates) => {
+        console.log(dates);
+        const searchValue = event?.toLowerCase();
+
+        let fromTime = setTime(new Date(dates?.[0]?.$d), Number(state.dateOpen.split('-')?.[0]),Number(state.dateOpen.split('-')?.[1]), Number(state.dateOpen.split('-')?.[2]));
+
+        let toTime = setTime(new Date(dates?.[1]?.$d), Number(state.dateOpen.split('-')?.[0]),Number(state.dateOpen.split('-')?.[1]), Number(state.dateOpen.split('-')?.[2]));
+
+        let arr = [...state.selectedAssignee];
+        const results = [];
+        let finals = [];
+
+        if (searchValue) {
+            arr.map((item) => {
+                if (item?.name?.toLowerCase()?.includes(searchValue) || item?.cccd?.includes(searchValue)) {
+                    results.push(item);
+                };
+            });
+        };
+
+        if (dates === null || dates === undefined) {
+            finals = results; 
+        } else {
+            const mapArr = results.length > 0 ? results : [...state.selectedAssignee];
+    
+            dates !== null && mapArr.map((item) => {
+                if (item?.modified_at?.unixTime >= (fromTime.getTime() / 1000) && item?.modified_at?.unixTime <= (toTime.getTime() / 1000)) finals.push(item);
+            });
+        };
+
+        state.searchValue = finals;
+        state.dateSearch = dates;
         state.searchText = searchValue;
         setState(prev => ({...prev}));
     };
@@ -252,6 +279,7 @@ const Responses = (props) => {
                         listUsers={state.selectedAssignee}
                         searchValue={state.searchValue}
                         searchText={state.searchText}
+                        dateSearch={state.dateSearch}
                         onDetailItem={onDetailItem}
                         onSearch={onSearch}
                     />

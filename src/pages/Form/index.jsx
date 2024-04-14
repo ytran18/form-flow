@@ -415,6 +415,7 @@ const Form = () => {
                 <Tabs
                     hideAdd
                     centered
+                    defaultActiveKey="2"
                     rootClassName="w-full h-full"
                     items={tabContent.map((item) => {
                         return {
