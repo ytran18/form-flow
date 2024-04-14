@@ -21,6 +21,7 @@ const Assignment = (props) => {
         isInfo: null,
         infoBooleanChange: false,
         answers: new Array(form?.questions?.length || 1).fill(null),
+        isDisableBtn: false,
     });
 
     useEffect(() => {
@@ -70,6 +71,8 @@ const Assignment = (props) => {
     };
 
     const handleSend = async () => {
+        state.isDisableBtn = true;
+        setState(prev => ({...prev}));
         if (state.isInfo === null) {
             message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
             return;
@@ -103,6 +106,8 @@ const Assignment = (props) => {
             message.success('Send answer successfully', 3);
             handleEnd();
         } catch (error) {
+            state.isDisableBtn = false;
+            setState(prev => ({...prev}));
             console.log(error);
         };
     };
@@ -152,6 +157,7 @@ const Assignment = (props) => {
             <div className="w-full flex justify-end">
                 <Button
                     type="primary"
+                    disabled={state.isDisableBtn}
                     className="!bg-[rgb(81,45,143)]"
                     onClick={handleSend}
                 >

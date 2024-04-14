@@ -14,7 +14,7 @@ const End = (props) => {
                 <div className="text-sm">Câu trả lời của bạn đã được ghi lại.</div>
             </div>
             <div
-                className="px-5 text-xs text-blue-400 underline cursor-pointer"
+                className="px-5 mb-5 text-xs text-blue-400 underline cursor-pointer"
                 onClick={() => window.location.reload()}
             >
                 Gửi ý kiến phản hồi khác

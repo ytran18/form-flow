@@ -92,7 +92,7 @@ const ListResponse = (props) => {
                 sticky={true}
                 pagination={{
                     hideOnSinglePage: true,
-                    pageSize: 50
+                    pageSize: 100
                 }}
                 onRow={(record, rowIndex) => {
                     return {
