@@ -104,7 +104,6 @@ const Responses = (props) => {
     };
 
     const onSearch = (event, dates) => {
-        console.log(dates);
         const searchValue = event?.toLowerCase();
 
         let fromTime = setTime(new Date(dates?.[0]?.$d), Number(state.dateOpen.split('-')?.[0]),Number(state.dateOpen.split('-')?.[1]), Number(state.dateOpen.split('-')?.[2]));

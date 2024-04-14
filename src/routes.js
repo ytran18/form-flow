@@ -16,6 +16,10 @@ const AppRoutes = [
     {
         path: '/guest/:formId',
         Component: Page?.GuestPage,
+    },
+    {
+        path: '/print',
+        Component: Page?.PrintPage,
     }
 ];
 

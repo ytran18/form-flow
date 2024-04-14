@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 
 import { Image as Img, Button } from 'antd';
 
+import { useDispatch } from "react-redux";
+import { printPackage } from "@core/redux/actions";
+import { useNavigate } from "react-router-dom";
+
 import IconBack from '@icon/iconBack.svg';
 import IconQuestion from '@icon/iconQuestions.svg';
 import IconArrowRight from '@icon/iconArrowRight.svg';
 import { errImg } from '@images/errorImg';
+import IconPrint from '@icon/iconPrint.svg';
 
 import useWindowSize from "../../../hooks/useWindowSize";
 
@@ -14,6 +19,8 @@ import './styles.css';
 const DetailResponse = (props) => {
 
     const { detailUser, detailAnswer, handleNavigateBack } = props;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [visible, setVisible] = useState(false);
 
@@ -29,6 +36,16 @@ const DetailResponse = (props) => {
         }
 
     },[iw]);
+
+    const handleNavigatePrint = () => {
+        const data = {
+            user: detailUser,
+            answer: detailAnswer,
+        };
+
+        dispatch(printPackage(data));
+        navigate({pathname:'/print'});
+    };
 
     return (
         <div className="w-full h-[84vh] pt-5 flex flex-col gap-10">
@@ -49,7 +66,7 @@ const DetailResponse = (props) => {
                         </Button>
                         <Img
                             id="cccd-img"
-                            className="w-full !h-full rounded-md"
+                            className="!h-full rounded-md"
                             src={detailUser?.assignee?.cccd_font_pic}
                             fallback={errImg}
                             preview={{
@@ -59,6 +76,12 @@ const DetailResponse = (props) => {
                                     setVisible(value);
                                 },
                             }}
+                        />
+                    </div>
+                    <div className="w-[200px] flex justify-end mt-3">
+                        <IconPrint
+                            className="cursor-pointer"
+                            onClick={handleNavigatePrint}
                         />
                     </div>
                 </div>

@@ -12,7 +12,6 @@ import './style.css';
 const ListResponse = (props) => {
 
     const { title, listUsers, onDetailItem, date, onSearch, searchValue, searchText, dateSearch } = props;
-    console.log(searchText,dateSearch);
 
     const iw = useWindowSize().width;
 

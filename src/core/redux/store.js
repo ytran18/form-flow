@@ -1,5 +1,5 @@
 import { applyMiddleware, createStore, combineReducers } from "redux";
-import { userReducer, formReducer, assigneeReducer } from "./reducer"
+import { userReducer, formReducer, assigneeReducer, printReducer } from "./reducer"
 import { thunk } from "redux-thunk"
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -8,6 +8,7 @@ const reducers = combineReducers({
     userReducer: userReducer,
     formReducer: formReducer,
     assigneeReducer: assigneeReducer,
+    printReducer: printReducer,
 });
 
 const persistConfig = {
