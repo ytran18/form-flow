@@ -46,26 +46,38 @@ const Print = () => {
                             }}
                         />
                     </div>
-                    <span>{`${print?.user?.assignee?.name} - ${print?.user?.assignee?.cccd}`}</span>
+                    <div className="flex flex-col gap-3">
+                        <span>{`${print?.user?.assignee?.name} - ${print?.user?.assignee?.cccd}`}</span>
+                        <div className="flex tracking-wider font-medium text-base items-center gap-1">
+                            <span>{`Điểm: `}</span>
+                            <span className="text-green-500">{`${print?.mark} `}</span>
+                            <span className="hidden md:block">/</span>
+                            <span className="text-blue-500">{` ${print?.answer?.length}`}</span>
+                    </div>
+                    </div>
                 </div>
                 <div className="my-5 flex flex-col gap-5 w-full">
-                    {Object.keys(print?.answer).map((item, index) => {
+                    {print?.answer.map((item, index) => {
                         return (
                             <div className="flex flex-col gap-3" key={`detail-answer-${index}`}>
                                 <div className="flex items-start gap-3 font-semibold">
                                     <div className="w-[20px] h-[20px]">
                                         <IconQuestion />
                                     </div>
-                                    {item}
+                                    {item.cau_hoi}
                                 </div>
-                                <div className="flex ml-3 items-start gap-3">
-                                    <div className="w-[20px]">
-                                        <IconArrowRight />
-                                    </div>
-                                    <div className="italic text-sm">
-                                        {print?.answer[item]}
-                                    </div>
-                                </div>
+                                {item?.list_dap_an?.map((list, idx) => {
+                                    return (
+                                        <div className="flex ml-3 items-start gap-3" key={`list_dap_an-${idx}`}>
+                                            <div className="w-[20px]">
+                                                <IconArrowRight />
+                                            </div>
+                                            <div className={`italic text-sm ${((list.value !== item.tra_loi)) ? '' : item.tra_loi === item.dap_an ? 'text-green-500' : 'text-red-500'}`}>
+                                                {list?.label}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         )
                     })}

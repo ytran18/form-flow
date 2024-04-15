@@ -24,7 +24,7 @@ const Responses = (props) => {
         selectedAssignee: [],
         detailUser: {},
         isDetailTab: false,
-        detailAnswer: {},
+        detailAnswer: [],
         searchValue: [],
         searchText: '',
         dateSearch: null,
@@ -49,11 +49,8 @@ const Responses = (props) => {
     
         const querySnapshot = await getDocs(query(collection(fireStore, 'answer')));
 
-        console.log(formId);
-    
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            console.log(data);
 
             if (!answersByDate[data?.date]) {
                 answersByDate[data?.date] = [];
@@ -202,7 +199,10 @@ const Responses = (props) => {
             if (type_question === "choice" || type_question === 'dropdown') {
                 form?.questions?.[index]?.answer?.map((ans) => {
                     if (ans?.value === item?.value && item?.label !== 'Add option') {
-                        answerValue[index] = ans?.label;
+                        answerValue[index] = {
+                            label: ans?.label,
+                            dap_an: item?.value
+                        };
                     };
                 });
             };
@@ -229,12 +229,21 @@ const Responses = (props) => {
             };
         });
 
-        let obj = {};
+        let arr = [];
         form?.questions.map((item, index) => {
-            obj[`${item?.title}`] = answerValue[index];
+            const title = item?.title;
+            const list_dap_an = item?.answer?.filter(value => value?.value !== 99);
+            const data = {
+                cau_hoi: title,
+                cau_tra_loi: answerValue[index].label,
+                dap_an:  item?.dap_an,
+                tra_loi: answerValue[index].dap_an,
+                list_dap_an
+            };
+            arr.push(data);
         });
 
-        state.detailAnswer = obj;
+        state.detailAnswer = arr;
         state.detailUser = user;
         state.isDetailTab = true;
         setState(prev => ({...prev}));
