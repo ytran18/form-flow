@@ -28,6 +28,7 @@ const Responses = (props) => {
         searchValue: [],
         searchText: '',
         dateSearch: null,
+        totalAnswer: 0,
     });
 
     function unixTimeToDateString(unixTime) {
@@ -44,20 +45,26 @@ const Responses = (props) => {
 
     const getData = async () => {
         let answersByDate = {};
-        let answers = [];
+        let total = 0;
     
-        const querySnapshot = await getDocs(query(collection(fireStore, 'answers'), where('formId', '==', formId)));
+        const querySnapshot = await getDocs(query(collection(fireStore, 'answer')));
+
+        console.log(formId);
     
         querySnapshot.forEach((doc) => {
-            answers.push(doc.data());
-            const answerData = doc.data();
-            const dateKey = unixTimeToDateString(answerData.modified_at)
+            const data = doc.data();
+            console.log(data);
 
-            if (!answersByDate[dateKey]) {
-                answersByDate[dateKey] = [];
-            }
-            
-            answersByDate[dateKey].push(answerData);
+            if (!answersByDate[data?.date]) {
+                answersByDate[data?.date] = [];
+            };
+
+            data?.lists?.map((item) => {
+                if (item?.formId === formId) {
+                    answersByDate[data?.date].push(item);
+                    total++;
+                };
+            });
         });
 
         const sortedDates = Object.keys(answersByDate).sort((a, b) => {
@@ -71,7 +78,7 @@ const Responses = (props) => {
             sortedAnswersByDate[date] = answersByDate[date];
         });
 
-        state.answers = answers;
+        state.totalAnswer = total;
         state.dates = sortedAnswersByDate;
         setState(prev => ({ ...prev }));
     };
@@ -138,10 +145,33 @@ const Responses = (props) => {
         setState(prev => ({...prev}));
     };
 
-    const handleViewItem = (date) => {
-        const users = state.dates[date];
+    const handleViewItem = async (date, data) => {
+        const answerIds = data.map(item => item.answerId);
+        const chunkSize = 30;
+    
+        const answerIdChunks = [];
+        for (let i = 0; i < answerIds.length; i += chunkSize) {
+            answerIdChunks.push(answerIds.slice(i, i + chunkSize));
+        }
+    
+        const answersList = [];
+    
+        for (const chunk of answerIdChunks) {
+            const answerQuery = query(
+                collection(fireStore, 'single_answer'),
+                where('_id', 'in', chunk)
+            );
+    
+            const querySnapshot = await getDocs(answerQuery);
+            querySnapshot.forEach(doc => {
+                const answerData = doc.data();
+                answersList.push(answerData);
+            });
+        }
+    
+        const users = [...answersList];
         const assignee = [];
-
+    
         users.map((item) => {
             assignee.push({
                 ...item?.assignee,
@@ -150,16 +180,17 @@ const Responses = (props) => {
                 modified_at: unixTimeToFormattedTime(item?.modified_at),
             });
         });
-
+    
         state.selectedAssignee = assignee;
-        state.selectedUsers = users;
+        state.answers = answersList;
+        // state.selectedUsers = users;
         state.isViewModal = !state.isViewModal;
         state.dateOpen = date;
         setState(prev => ({...prev}));
-    };
+    };    
 
     const onDetailItem = (id, date) => {
-        const user = state.dates[date].find(item => item?._id === id);
+        const user = state.answers.find(item => item?._id === id);
 
         const answer = user?.answers;
         let answerValue = new Array(answer?.length).fill(null);
@@ -222,7 +253,7 @@ const Responses = (props) => {
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="w-full h-[10px] bg-[rgb(103,58,183)] rounded-tl-lg rounded-tr-lg"></div>
                 <div className="px-5 w-full flex items-center justify-between">
-                    <div className="text-2xl">{`${state.answers?.length || 0} responses`}</div>
+                    <div className="text-2xl">{`${state.totalAnswer || 0} responses`}</div>
                     <div className="flex items-center gap-3">
                         <div className="text-xs opacity-80 font-medium">Accepting responses</div>
                         <Switch
@@ -251,7 +282,7 @@ const Responses = (props) => {
                                 <div className="">
                                     <IconView
                                         className="cursor-pointer"
-                                        onClick={() => handleViewItem(item)}
+                                        onClick={() => handleViewItem(item, state.dates[item])}
                                     />
                                 </div>
                             </div>

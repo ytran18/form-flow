@@ -5,7 +5,7 @@ import { Radio, Button, message } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 
 import { fireStore, storage } from "@core/firebase/firebase";
-import { doc, collection, setDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 import { useAssigneePackageHook } from "@core/redux/hooks";
@@ -70,6 +70,18 @@ const Assignment = (props) => {
         }
     };
 
+    const unixTimeToDateString = (unixTime) => {
+        var date = new Date(unixTime * 1000);
+    
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+
+        var dateString = year + '-' + month + '-' + day;
+    
+        return dateString;
+    }
+
     const handleSend = async () => {
         state.isDisableBtn = true;
         setState(prev => ({...prev}));
@@ -84,7 +96,7 @@ const Assignment = (props) => {
                 return;
             };
         };
-
+        
         try {
             const cccd_font_pic = await handleUploadCCCD(assignee.cccd_font_pic);
             
@@ -100,8 +112,28 @@ const Assignment = (props) => {
                 assignee: user_answer,
                 modified_at: Math.floor(new Date().getTime() / 1000)
             };
+            
+            const date = unixTimeToDateString(Math.floor(new Date().getTime() / 1000))
 
-            const docRef = doc(collection(fireStore, 'answers'), rs._id);
+            const answerData = {
+                answerId: rs?._id,
+                formId: form?._id,
+            };
+
+            const answerRef = doc(collection(fireStore, 'answer'), date);
+            const docRef = doc(collection(fireStore, 'single_answer'), rs._id);
+
+            const docSnapshot = await getDoc(answerRef);
+            if (!docSnapshot.exists()) {
+                await setDoc(answerRef, {
+                    lists: [answerData],
+                });
+            } else {
+                await updateDoc(answerRef, {
+                    lists: arrayUnion(answerData),
+                });
+            };
+
             await setDoc(docRef, rs);
             message.success('Send answer successfully', 3);
             handleEnd();
