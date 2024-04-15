@@ -16,6 +16,7 @@ import IconTitle from '@icon/iconTitle.svg';
 import IconTrash from '@icon/iconTrash.svg';
 import IconNewTab from '@icon/iconNewTab.svg';
 import IconCopy from '@icon/iconCopy.svg';
+import IconGlobal from '@icon/iconGlobal.svg';
 
 const Card = (props) => {
 
@@ -32,28 +33,34 @@ const Card = (props) => {
 
     const contextMenu = [
         {
-            label: 'Rename',
+            label: 'Đổi tên',
             key: '1',
             icon: <IconTitle />,
             onClick: () => handleRename(),
         },
         {
-            label: 'Remove',
+            label: 'Xóa',
             key: '2',
             icon: <IconTrash />,
             onClick: () => handleRemove(),
         },
         {
-            label: 'Clone',
+            label: 'Sao chép',
             key: '3',
             icon: <IconCopy className="scale-75" />,
             onClick: () => handleClone(),
         },
         {
-            label: 'Open in new tab',
+            label: 'Mở trong tab mới',
             key: '4',
             icon: <IconNewTab />,
             onClick: () => handleOpenInNewTab(),
+        },
+        {
+            label: 'Hiện bài thi trên web',
+            key: '5',
+            icon: <IconGlobal />,
+            onClick: () => handleDisplayFormInWeb(),
         },
     ];
 
@@ -111,6 +118,18 @@ const Card = (props) => {
         window.open(link, '_blank');
 
         dispatch(formPackage(data));
+        state.isOpenContextMenu = false,
+        setState(prev => ({...prev}));
+    };
+    
+    const handleDisplayFormInWeb = async () => {
+        const link = `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${data?._id}`;
+        const rs = {
+            active: link
+        };
+        
+        const docRef = doc(collection(fireStore, 'active_form'), 'data');
+        await setDoc(docRef, rs);
         state.isOpenContextMenu = false,
         setState(prev => ({...prev}));
     };

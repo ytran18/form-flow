@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
-
 import { fireStore } from "@core/firebase/firebase";
 import { doc, getDoc } from 'firebase/firestore';
 
 import { useAssigneePackageHook } from "@core/redux/hooks";
 import { useDispatch } from "react-redux";
 import { assigneePackage } from "@core/redux/actions";
+
+import { useNavigate } from "react-router-dom";
 
 import { Spin } from 'antd';
 
@@ -19,8 +19,8 @@ import NotAvailable from "./NotAvailable";
 
 const Guest = () => {
 
-    const param = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [state, setState] = useState({
         form: {},
@@ -29,21 +29,39 @@ const Guest = () => {
         isAvailable: true,
     });
 
-    const assignee = useAssigneePackageHook();
-
     useEffect(() => {
-        if (param.formId) {
-            const docRef = doc(fireStore, 'forms', param.formId);
-            getDoc(docRef).then((snapshot) => {
-                let form = {};
-                if (snapshot.data()) form = snapshot.data();
-                state.form = form;
-                state.isAvailable = form?.isAvailable;
-                state.isLoading = false;
-                setState(prev => ({...prev}));
-            });
+        async function getActiveFormLink() {
+            try {
+                const docRef = doc(fireStore, 'active_form', 'data');
+                const snapshot = await getDoc(docRef);
+                if (snapshot.exists()) {
+                    const link = snapshot.data()?.active;
+                    if (link && typeof link === 'string') {
+                        const splitId = link.split('/').pop();
+                        navigate({pathname: `/guest/${splitId}`})
+                        if (splitId) {
+                            const docRef = doc(fireStore, 'forms', splitId);
+                            getDoc(docRef).then((snapshot) => {
+                                let form = {};
+                                if (snapshot.data()) form = snapshot.data();
+                                state.form = form;
+                                state.isAvailable = form?.isAvailable;
+                                state.isLoading = false;
+                                setState(prev => ({...prev}));
+                            });
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Lỗi khi truy xuất dữ liệu từ Firestore:', error);
+            }
         };
-    },[]);
+    
+        getActiveFormLink();
+    
+    }, []);
+
+    const assignee = useAssigneePackageHook();
 
     const handleNextStep = (data) => {
         state.activeTab = 1;

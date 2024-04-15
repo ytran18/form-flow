@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Tooltip, Modal, message } from 'antd';
 
 import { fireStore } from "@core/firebase/firebase";
-import { doc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc, collection, setDoc } from 'firebase/firestore';
 
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +12,7 @@ import { formPackage } from "@core/redux/actions";
 
 import IconForm from '@icon/iconForm.svg';
 import IconTrash from '@icon/iconTrash.svg';
+import IconGlobal from '@icon/iconGlobal.svg';
 
 const FormHeader = (props) => {
 
@@ -38,6 +39,17 @@ const FormHeader = (props) => {
         setState(prev => ({...prev}));
     };
 
+    const handleDisplayFormInWeb = async () => {
+        const link = `https://antoanvesinhlaodong.vn/bieu-mau/#/guest/${form?._id}`;
+        const rs = {
+            active: link
+        };
+        
+        const docRef = doc(collection(fireStore, 'active_form'), 'data');
+        await setDoc(docRef, rs);
+        message.success('Đã hiện bài thi này trên web!', 3);
+    };
+
     return(
         <div className="w-full h-full flex items-center justify-between px-8 ml:px-20">
             <div
@@ -53,13 +65,25 @@ const FormHeader = (props) => {
 
                 <Tooltip
                     placement="bottom"
-                    title="Delete"
+                    title="Xóa"
                     arrow={false}
                     color="#9b9b9b"
                 >
                     <IconTrash
                         className="cursor-pointer"
                         onClick={() => handleDelete(true)}
+                    />
+                </Tooltip>
+
+                <Tooltip
+                    placement="bottom"
+                    title="Hiện bài thi trên web"
+                    arrow={false}
+                    color="#9b9b9b"
+                >
+                    <IconGlobal
+                        className="cursor-pointer"
+                        onClick={handleDisplayFormInWeb}
                     />
                 </Tooltip>
 
