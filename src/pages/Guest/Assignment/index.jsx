@@ -126,6 +126,7 @@ const Assignment = (props) => {
             const docSnapshot = await getDoc(answerRef);
             if (!docSnapshot.exists()) {
                 await setDoc(answerRef, {
+                    date: date,
                     lists: [answerData],
                 });
             } else {
