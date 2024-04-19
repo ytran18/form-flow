@@ -15,14 +15,30 @@ const ListResponse = (props) => {
 
     const iw = useWindowSize().width;
 
+    const convertTimeToMinutes = (time) => {
+        const [hours, minutes] = time.split(':');
+        return parseInt(hours) * 60 + parseInt(minutes);
+    };
+
+    const getLastWordFirstChar = (name) => {
+        const words = name.split(' ');
+        const lastWord = words[words.length - 1];
+        return lastWord.charAt(0).toLowerCase();
+    };
+
     const columns = useMemo(() => {
         return VSO(iw, {
             900 : [
                 {
                     title: 'Tên',
                     dataIndex: 'name',
-                    sorter: (a, b) => a.name.length - b.name.length,
-                    sortDirections: ['descend'],
+                    sorter: (a, b) => {
+                        const aLastChar = getLastWordFirstChar(a.name);
+                        const bLastChar = getLastWordFirstChar(b.name);
+
+                        return aLastChar.localeCompare(bLastChar);
+                    },
+                    sortDirections: ['descend', 'ascend'], 
                 },
                 {
                     title: 'Số căn cước',
@@ -39,6 +55,13 @@ const ListResponse = (props) => {
                 {
                     title: 'Thời gian',
                     dataIndex: 'modified_at',
+                    sorter: (a, b) => {
+                        const aMinutes = convertTimeToMinutes(a.modified_at);
+                        const bMinutes = convertTimeToMinutes(b.modified_at);
+
+                        return aMinutes - bMinutes;
+                    },
+                    sortDirections: ['descend', 'ascend'],
                 },
             ],
 
@@ -46,8 +69,13 @@ const ListResponse = (props) => {
                 {
                     title: 'Tên',
                     dataIndex: 'name',
-                    sorter: (a, b) => a.name.length - b.name.length,
-                    sortDirections: ['descend'],
+                    sorter: (a, b) => {
+                        const aLastChar = getLastWordFirstChar(a.name);
+                        const bLastChar = getLastWordFirstChar(b.name);
+
+                        return aLastChar.localeCompare(bLastChar);
+                    },
+                    sortDirections: ['descend', 'ascend'], 
                 },
                 {
                     title: 'Số căn cước',
@@ -56,6 +84,13 @@ const ListResponse = (props) => {
                 {
                     title: 'Thời gian',
                     dataIndex: 'modified_at',
+                    sorter: (a, b) => {
+                        const aMinutes = convertTimeToMinutes(a.modified_at);
+                        const bMinutes = convertTimeToMinutes(b.modified_at);
+
+                        return aMinutes - bMinutes;
+                    },
+                    sortDirections: ['descend', 'ascend'],
                 },
             ],
             
@@ -63,8 +98,13 @@ const ListResponse = (props) => {
                 {
                     title: 'Tên',
                     dataIndex: 'name',
-                    sorter: (a, b) => a.name.length - b.name.length,
-                    sortDirections: ['descend'],
+                    sorter: (a, b) => {
+                        const aLastChar = getLastWordFirstChar(a.name);
+                        const bLastChar = getLastWordFirstChar(b.name);
+
+                        return aLastChar.localeCompare(bLastChar);
+                    },
+                    sortDirections: ['descend', 'ascend'], 
                 },
                 {
                     title: 'Số căn cước',
