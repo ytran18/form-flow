@@ -83,11 +83,11 @@ const Header = (props) => {
         <div className="w-full h-full flex items-center justify-between px-8 ml:px-20">
             <div className="flex items-center gap-3">
                 <IconForm className="cursor-pointer"/>
-                <div className="font-semibold text-xl">Forms</div>
+                <div className="font-semibold text-xl">Bài kiểm tra</div>
             </div>
             <div className="w-2/5">
                 <Search
-                    placeholder="Search forms ..."
+                    placeholder="Tìm kiếm bài kiểm tra ..."
                     size="large"
                     value={searchValue}
                     onChange={handleSearch}

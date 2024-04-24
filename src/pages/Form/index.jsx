@@ -359,7 +359,7 @@ const Form = () => {
 
     const tabContent = [
         {
-            label: 'Questions',
+            label: 'Câu hỏi',
             key: '1',
             children: (
                 <Questions
@@ -388,7 +388,7 @@ const Form = () => {
             ),
         },
         {
-            label: 'Responses',
+            label: 'Phản hồi',
             key: '2',
             children: (
                 <Responses

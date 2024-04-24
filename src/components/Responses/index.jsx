@@ -262,9 +262,9 @@ const Responses = (props) => {
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="w-full h-[10px] bg-[rgb(103,58,183)] rounded-tl-lg rounded-tr-lg"></div>
                 <div className="px-5 w-full flex items-center justify-between">
-                    <div className="text-2xl">{`${state.totalAnswer || 0} responses`}</div>
+                    <div className="text-2xl">{`${state.totalAnswer || 0} phản hồi`}</div>
                     <div className="flex items-center gap-3">
-                        <div className="text-xs opacity-80 font-medium">Accepting responses</div>
+                        <div className="text-xs opacity-80 font-medium">Chấp nhận phải hồi</div>
                         <Switch
                             className="!bg-[rgb(140,140,140)]"
                             checked={isAvailable}
@@ -273,12 +273,12 @@ const Responses = (props) => {
                     </div>
                 </div>
                 <div className={`px-5 w-full text-sm ${isAvailable ? 'text-green-500' : 'text-red-500'}`}>
-                    {state.isToggle ? 'This form is currently accepting responses' : 'This form is no longer accepting responses'}
+                    {state.isToggle ? 'Bài kiểm tra này đang chấp nhận phản hồi' : 'Bài kiểm tra này không còn chấp nhận phản hồi'}
                 </div>
             </div>
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] py-3 flex flex-col gap-3">
                 <div className="px-5 pb-3 border-b w-full flex items-center justify-between">
-                    <div className="text-xl">Who has responded?</div>
+                    <div className="text-xl">Danh sách phản hồi</div>
                 </div>
                 <div className={`px-5 w-full text-sm flex flex-col gap-3`}>
                     {Object.keys(state.dates).map((item, index) => {

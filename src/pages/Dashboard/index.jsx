@@ -141,7 +141,7 @@ const Dashboard = () => {
             </div>
             <div className="flex-grow overflow-y-auto flex flex-col gap-3 w-full px-8 ml:px-52">
                 <div className="w-full flex items-center justify-between">
-                    <div className="font-semibold">Recent forms</div>
+                    <div className="font-semibold">Các bài kiểm tra gần đây</div>
                 </div>
                 {state.isLoading && (
                     <div className="w-full pt-10 flex justify-center">

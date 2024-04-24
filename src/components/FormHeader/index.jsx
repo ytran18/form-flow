@@ -92,7 +92,7 @@ const FormHeader = (props) => {
                     className="bg-[rgb(103,58,183)]"
                     onClick={handleSave}
                 >
-                    Save
+                    Lưu
                 </Button>
 
                 <Button
@@ -100,7 +100,7 @@ const FormHeader = (props) => {
                     className="bg-[rgb(103,58,183)]"
                     onClick={handleSend}
                 >
-                    Send
+                    Gửi
                 </Button>
 
             </div>
@@ -114,7 +114,7 @@ const FormHeader = (props) => {
                 title="Delete form"
                 className="send-form"
             >
-                <div>This item will be deleted, are you sure?</div>
+                <div>Bài kiểm tra này sẽ bị xóa, ban chắc chứ?</div>
             </Modal>
         </div>
     );
