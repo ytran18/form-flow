@@ -18,7 +18,7 @@ import './styles.css';
 
 const DetailResponse = (props) => {
 
-    const { detailUser, detailAnswer, handleNavigateBack } = props;
+    const { detailUser, detailAnswer, handleNavigateBack, isTinhDiem, maxDiem, tongDiem } = props;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -79,12 +79,14 @@ const DetailResponse = (props) => {
                         <span>{` ${detailUser?.assignee?.cccd}`}</span>
                     </div>
                 </div>
-                <div className="flex tracking-wider font-medium text-base items-center gap-1">
-                        <span>{`Điểm: `}</span>
-                        <span className="text-green-500">{`${state.mark} `}</span>
-                        <span className="hidden md:block">/</span>
-                        <span className="text-blue-500">{` ${detailAnswer.length}`}</span>
-                </div>
+                {isTinhDiem && (
+                    <div className="flex tracking-wider font-medium text-base items-center gap-1">
+                            <span>{`Điểm: `}</span>
+                            <span className="text-green-500">{`${tongDiem} `}</span>
+                            <span className="hidden md:block">/</span>
+                            <span className="text-blue-500">{` ${maxDiem}`}</span>
+                    </div>
+                )}
                 <div className="absolute top-3 right-0">
                     <div className="w-[200px] h-[150px] flex justify-end">
                         <Button className="md:hidden bg-[rgb(103,58,183)]" type="primary" onClick={() => setVisible(true)}>

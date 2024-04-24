@@ -33,6 +33,7 @@ const Form = () => {
         isScroll: false,
         isAvailable: true,
         isTinhDiem: true,
+        isVisibleModalDiscard: false,
     });
 
     const navigate = useNavigate();
@@ -41,28 +42,31 @@ const Form = () => {
     const form = useFormPackageHook();
     const param = useParams();
 
-
     useEffect(() => {
         if (Object.keys(form).length > 0) {
-            const questions = [...form.questions];
-            const defaultAnswer = { value: 99, label: 'Add option', img_url: ''};
-
-            questions.map((item) => {
-                if (item?.type_answer !== 'paragraph' && item?.answer?.[item?.answer?.length - 1]?.label !== 'Add option') {
-                    return {
-                        ...item,
-                        answer: item?.answer.push(defaultAnswer),
+            const updatedForm = { ...form };
+    
+            if (updatedForm.questions) {
+                updatedForm.questions = updatedForm.questions.map(item => {
+                    if (item?.type_answer !== 'paragraph' && item?.answer?.[item?.answer?.length - 1]?.label !== 'Add option') {
+                        const updatedAnswer = [...item.answer, { value: 99, label: 'Add option', img_url: '' }];
+                        return {
+                            ...item,
+                            answer: updatedAnswer,
+                        };
                     };
-                };
-                return item;
-            });
+                    return item;
+                });
+            };
 
-            state.formTitle = form.formTitle;
-            state.formDescription = form.formDescription;
-            state.questions = questions;
-            state.isAvailable = form?.isAvailable;
-
-            setState(prev => ({...prev}));
+            setState(prev => ({
+                ...prev,
+                formTitle: updatedForm.formTitle,
+                formDescription: updatedForm.formDescription,
+                questions: updatedForm.questions,
+                isAvailable: updatedForm.isAvailable,
+                isTinhDiem: updatedForm.isTinhDiem
+            }));
         }
     },[form]);
 
@@ -374,8 +378,43 @@ const Form = () => {
     };
 
     const handleNavigate = () => {
-        dispatch(formPackage({}));
-        navigate({pathname:'/'});
+        let updatedQuestions = [...state.questions];
+    
+        updatedQuestions = updatedQuestions.map((item, index) => {
+            if (item?.type_answer !== 'paragraph') {
+                return {
+                    ...item,
+                    index: index + 1,
+                    answer: item?.answer.slice(0, -1),
+                };
+            }
+            return { ...item, index: index + 1 };
+        });
+
+        const rs = {
+            _id: location.state === 'new' ? param.formId : form?._id,
+            formTitle: state.formTitle,
+            formDescription: state.formDescription,
+            questions: updatedQuestions,
+            mordified_at: form?.mordified_at,
+            preview_img: form?.preview_img,
+            isAvailable: state.isAvailable,
+            isTinhDiem: state.isTinhDiem
+        };
+
+        const obj = {};
+
+        Object.keys(form).map((item) => {
+            obj[item] = rs[item];
+        });
+
+        if(JSON.stringify(form) === JSON.stringify(obj)) {
+            dispatch(formPackage({}));
+            navigate({pathname:'/'});
+        } else {
+            state.isVisibleModalDiscard = true;
+            setState(prev => ({...prev}));
+        }
     };
 
     const onToggleChange = (checked) => {
@@ -425,6 +464,7 @@ const Form = () => {
                     form={form}
                     formId={form?._id}
                     isAvailable={state.isAvailable}
+                    isTinhDiem={state.isTinhDiem}
                     onToggleChange={onToggleChange}
                 />
             )
@@ -478,6 +518,17 @@ const Form = () => {
                         className="w-full border-b outline-none py-2"
                     />
                 </div>
+            </Modal>
+            <Modal
+                open={state.isVisibleModalDiscard}
+                onCancel={() => setState(prev => ({...prev, isVisibleModalDiscard: false}))}
+                onOk={() => {dispatch(formPackage({})); navigate({pathname:'/'});}}
+                okText="Thoát"
+                cancelText="Hủy"
+                okButtonProps={{className: 'bg-[rgb(103,58,183)]'}}
+                title=""
+            >
+                <div>Bạn có thay đổi chưa được lưu, Bạn có chắc chắn muốn thoát chứ?</div>
             </Modal>
         </div>
     );

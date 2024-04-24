@@ -40,7 +40,7 @@ const Guest = () => {
                         const splitId = link.split('/').pop();
                         navigate({pathname: `/guest/${splitId}`})
                         if (splitId) {
-                            const docRef = doc(fireStore, 'forms', '4308d94f-a196-457b-8edd-88e78e1281c1');
+                            const docRef = doc(fireStore, 'forms', splitId);
                             getDoc(docRef).then((snapshot) => {
                                 let form = {};
                                 if (snapshot.data()) form = snapshot.data();

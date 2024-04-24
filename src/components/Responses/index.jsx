@@ -12,7 +12,7 @@ import IconView from '@icon/iconView.svg';
 
 const Responses = (props) => {
 
-    const { formId, form, isAvailable, onToggleChange } = props;
+    const { formId, form, isAvailable, onToggleChange, isTinhDiem } = props;
 
     const [state, setState] = useState({
         isToggle: true,
@@ -29,19 +29,9 @@ const Responses = (props) => {
         searchText: '',
         dateSearch: null,
         totalAnswer: 0,
+        maxDiem: 0,
+        tongDiem: 0,
     });
-
-    function unixTimeToDateString(unixTime) {
-        var date = new Date(unixTime * 1000);
-    
-        var year = date.getFullYear();
-        var month = (date.getMonth() + 1).toString().padStart(2, '0');
-        var day = date.getDate().toString().padStart(2, '0');
-
-        var dateString = year + '-' + month + '-' + day;
-    
-        return dateString;
-    }
 
     const getData = async () => {
         let answersByDate = {};
@@ -64,6 +54,13 @@ const Responses = (props) => {
             });
         });
 
+        // remove if reponse === 0
+        Object.keys(answersByDate).forEach((item) => {
+            if (answersByDate[item]?.length === 0) {
+                delete answersByDate[item];
+            }
+        });
+
         const sortedDates = Object.keys(answersByDate).sort((a, b) => {
             const dateA = new Date(a);
             const dateB = new Date(b);
@@ -75,7 +72,13 @@ const Responses = (props) => {
             sortedAnswersByDate[date] = answersByDate[date];
         });
 
+        let maxDiem = 0;
+        if (form?.questions?.length > 0) {
+            maxDiem = form?.questions?.reduce((total, item) => total += Number(item?.diem), 0);
+        };
+
         state.totalAnswer = total;
+        state.maxDiem = maxDiem;
         state.dates = sortedAnswersByDate;
         setState(prev => ({ ...prev }));
     };
@@ -230,8 +233,10 @@ const Responses = (props) => {
         });
 
         let arr = [];
+        let tong_diem = 0;
         form?.questions.map((item, index) => {
             if (!item?.isHide) {
+                if ((item?.dap_an === answerValue[index]?.dap_an) && isTinhDiem) tong_diem += item?.diem;
                 const title = item?.title;
                 const list_dap_an = item?.answer?.filter(value => value?.value !== 99);
                 const data = {
@@ -248,6 +253,7 @@ const Responses = (props) => {
         state.detailAnswer = arr;
         state.detailUser = user;
         state.isDetailTab = true;
+        state.tongDiem = tong_diem;
         setState(prev => ({...prev}));
     };
 
@@ -311,6 +317,9 @@ const Responses = (props) => {
                     <DetailResponse
                         detailUser={state.detailUser}
                         detailAnswer={state.detailAnswer}
+                        isTinhDiem={isTinhDiem}
+                        maxDiem={state.maxDiem}
+                        tongDiem={state.tongDiem}
                         handleNavigateBack={handleNavigateBack}
                     />
                 ) : (
