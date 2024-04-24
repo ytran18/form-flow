@@ -126,7 +126,7 @@ const DetailResponse = (props) => {
                                 <div className="w-[20px]">
                                     <IconArrowRight />
                                 </div>
-                                <div className={`italic text-sm ${item.dap_an !== item.tra_loi ? 'text-red-500' : ''}`}>
+                                <div className={`italic text-sm ${((item.dap_an !== item.tra_loi) && item.dap_an !== null) ? 'text-red-500' : ''}`}>
                                     {item.cau_tra_loi}
                                 </div>
                             </div>

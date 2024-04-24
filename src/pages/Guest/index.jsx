@@ -40,11 +40,16 @@ const Guest = () => {
                         const splitId = link.split('/').pop();
                         navigate({pathname: `/guest/${splitId}`})
                         if (splitId) {
-                            const docRef = doc(fireStore, 'forms', splitId);
+                            const docRef = doc(fireStore, 'forms', '4308d94f-a196-457b-8edd-88e78e1281c1');
                             getDoc(docRef).then((snapshot) => {
                                 let form = {};
                                 if (snapshot.data()) form = snapshot.data();
-                                state.form = form;
+                                const filterShowQuestions = [...form?.questions].filter(item => item?.isHide === false);
+                                console.log(filterShowQuestions);
+                                state.form = {
+                                    ...form,
+                                    questions: filterShowQuestions,
+                                };
                                 state.isAvailable = form?.isAvailable;
                                 state.isLoading = false;
                                 setState(prev => ({...prev}));

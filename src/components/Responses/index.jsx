@@ -231,16 +231,18 @@ const Responses = (props) => {
 
         let arr = [];
         form?.questions.map((item, index) => {
-            const title = item?.title;
-            const list_dap_an = item?.answer?.filter(value => value?.value !== 99);
-            const data = {
-                cau_hoi: title,
-                cau_tra_loi: answerValue[index].label,
-                dap_an:  item?.dap_an,
-                tra_loi: answerValue[index].dap_an,
-                list_dap_an
-            };
-            arr.push(data);
+            if (!item?.isHide) {
+                const title = item?.title;
+                const list_dap_an = item?.answer?.filter(value => value?.value !== 99);
+                const data = {
+                    cau_hoi: title,
+                    cau_tra_loi: answerValue[index]?.label,
+                    dap_an:  item?.dap_an,
+                    tra_loi: answerValue[index]?.dap_an,
+                    list_dap_an
+                };
+                arr.push(data);
+            }
         });
 
         state.detailAnswer = arr;

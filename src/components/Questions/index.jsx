@@ -2,16 +2,16 @@ import React from "react";
 
 import QuestionBlock from "@components/QuestionBlock";
 
-import { Tooltip } from "antd";
+import { Tooltip, Switch } from "antd";
 
 import IconPlus from '@icon/iconPlus.svg';
 
 const Questions = (props) => {
 
-    const { questions, formTitle, formDescription, isScroll } = props;
+    const { questions, formTitle, formDescription, isScroll, isTinhDiem } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, onChangeFormTitle, onChangeFormDescription, handleRequire } = props;
     const { handleUploadQuestionImage, handleChangeAnswerIndex, handleRemoveAnswer, handleImageAnwer, handleDeleteImageAnswer } = props;
-    const { handleInputClickAnswer, handleCopyBlock, handleRemoveBlock, handleRemoveQuestionImage, onChooseAnswer, handleRemoveDapAn } = props;
+    const { handleInputClickAnswer, handleCopyBlock, handleRemoveBlock, handleRemoveQuestionImage, onChooseAnswer, handleRemoveDapAn, handleDisbale, handleTinhDiem, handleChangeDiem } = props;
 
     const onInput = (e) => {
         const element = e.target;
@@ -24,7 +24,7 @@ const Questions = (props) => {
 
     return (
         <div id="preview-img" className="w-full h-full flex flex-col gap-5">
-            <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
+            <div className="bg-white rounded-lg h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="w-full h-[10px] bg-[rgb(103,58,183)] rounded-tl-lg rounded-tr-lg"></div>
                 <div className="px-5">
                     <input
@@ -44,6 +44,14 @@ const Questions = (props) => {
                         className="outline-none border-none w-full resize-none"
                     />
                 </div>
+                <div className="flex w-full justify-end gap-2 py-2 px-3">
+                    Tính điểm
+                    <Switch
+                        value={isTinhDiem}
+                        className="bg-[rgb(140,140,140)]"
+                        onChange={(value) => handleTinhDiem(value)}
+                    />
+                </div>
             </div>
             {questions.map((item) => {
                 return (
@@ -51,10 +59,12 @@ const Questions = (props) => {
                         <QuestionBlock
                             question={item}
                             isScroll={isScroll}
+                            isTinhDiem={isTinhDiem}
                             handleAddBlock={handleAddBlock}
                             onChangeQuestionTitle={onChangeQuestionTitle}
                             handleChangeType={handleChangeType}
                             handleRequire={handleRequire}
+                            handleDisbale={handleDisbale}
                             handleUploadQuestionImage={handleUploadQuestionImage}
                             handleChangeAnswerIndex={handleChangeAnswerIndex}
                             handleRemoveAnswer={handleRemoveAnswer}
@@ -66,6 +76,7 @@ const Questions = (props) => {
                             handleRemoveQuestionImage={handleRemoveQuestionImage}
                             onChooseAnswer={onChooseAnswer}
                             handleRemoveDapAn={handleRemoveDapAn}
+                            handleChangeDiem={handleChangeDiem}
                         />
                     </div>
                 )

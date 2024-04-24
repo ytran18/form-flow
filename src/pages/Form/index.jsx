@@ -32,6 +32,7 @@ const Form = () => {
         isVisibleModalSend: false,
         isScroll: false,
         isAvailable: true,
+        isTinhDiem: true,
     });
 
     const navigate = useNavigate();
@@ -82,6 +83,8 @@ const Form = () => {
             answer: defaultAnswer,
             textAnswer: '',
             isRequire: false,
+            isHide: false,
+            diem: 0,
         };
 
         state.questions = [item];
@@ -103,6 +106,9 @@ const Form = () => {
             dap_an: null,
             answer: defaultAnswer,
             textAnswer: '',
+            isRequire: false,
+            isHide: false,
+            diem: 0,
         };
 
         if (!blockId) {
@@ -150,6 +156,25 @@ const Form = () => {
     const handleRequire = (value, id) => {
         const index = state.questions.findIndex(item => item._id === id);
         state.questions[index].isRequire = value;
+        setState(prev => ({...prev}));
+    };
+
+    // is show and hide
+    const handleDisbale = (value, id) => {
+        const index = state.questions.findIndex(item => item._id === id);
+        state.questions[index].isHide = value;
+        setState(prev => ({...prev}));
+    };
+    
+    const handleChangeDiem = (value, id) => {
+        const index = state.questions.findIndex(item => item._id === id);
+        state.questions[index].diem = value;
+        setState(prev => ({...prev}));
+    };
+
+    // handle bat / tat tinh diem
+    const handleTinhDiem = (value) => {
+        state.isTinhDiem = value;
         setState(prev => ({...prev}));
     };
 
@@ -328,6 +353,7 @@ const Form = () => {
                 mordified_at: new Date().toLocaleString(),
                 preview_img: previewURL,
                 isAvailable: state.isAvailable,
+                isTinhDiem: state.isTinhDiem
             };
 
             const docRef = doc(collection(fireStore, 'forms'), rs._id);
@@ -367,6 +393,7 @@ const Form = () => {
                     formTitle={state.formTitle}
                     formDescription={state.formDescription}
                     isScroll={state.isScroll}
+                    isTinhDiem={state.isTinhDiem}
                     onChangeFormTitle={onChangeFormTitle}
                     onChangeFormDescription={onChangeFormDescription}
                     handleAddBlock={handleAddBlock}
@@ -384,6 +411,9 @@ const Form = () => {
                     handleRemoveQuestionImage={handleRemoveQuestionImage}
                     onChooseAnswer={onChooseAnswer}
                     handleRemoveDapAn={handleRemoveDapAn}
+                    handleDisbale={handleDisbale}
+                    handleTinhDiem={handleTinhDiem}
+                    handleChangeDiem={handleChangeDiem}
                 />
             ),
         },

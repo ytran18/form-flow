@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Upload, Select, Switch, Tooltip, Spin } from 'antd';
+import { Upload, Select, Switch, Tooltip, Spin, InputNumber } from 'antd';
 
 import Paragraph from "@components/Paragraph";
 import MultipleChoice from "@components/MultipleChoice";
@@ -15,10 +15,10 @@ import './style.css';
 
 const QuestionBlock = (props) => {
 
-    const { question, isScroll } = props;
+    const { question, isScroll, isTinhDiem } = props;
     const { handleAddBlock, onChangeQuestionTitle, handleChangeType, handleRequire, handleUploadQuestionImage, handleRemoveAnswer } = props;
     const { handleChangeAnswerIndex, handleImageAnwer, handleDeleteImageAnswer, handleInputClickAnswer, handleRemoveBlock, handleCopyBlock } = props;
-    const { handleRemoveQuestionImage, onChooseAnswer, handleRemoveDapAn } = props;
+    const { handleRemoveQuestionImage, onChooseAnswer, handleRemoveDapAn, handleDisbale, handleChangeDiem } = props;
 
     const [state, setState] = useState({
         isLoading: true,
@@ -159,11 +159,11 @@ const QuestionBlock = (props) => {
                     value={question.title}
                     onInput={onInput} 
                     id="question-title"
-                    placeholder="Question"
+                    placeholder="Câu hỏi"
                     className="w-full md:w-[400px] tracking-wide min-h-[57px] overflow-hidden max-w-[400px] border-b text-lg outline-none resize-none placeholder: text-opacity-70 placeholder:tracking-wider"
                     onChange={(e) => onChangeQuestionTitle(e, question._id)}
                 />
-                <div className="flex flex-grow justify-between gap-10">
+                <div className="flex flex-grow gap-5">
                     <div className="flex">
                         <Upload
                             action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
@@ -183,6 +183,17 @@ const QuestionBlock = (props) => {
                             options={typeAnswers}
                         />
                     </div>
+                    {isTinhDiem && (
+                        <div className="">
+                            <InputNumber
+                                className="w-16"
+                                value={question.diem || 0}
+                                min={0}
+                                step={0.5}
+                                onChange={(value) => handleChangeDiem(value, question._id)}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
             {question?.image_url?.length > 0 && (
@@ -209,43 +220,54 @@ const QuestionBlock = (props) => {
             <div className="w-full border-b py-5">
                 {renderAnswer()}
             </div>
-            <div className="w-full flex items-center py-2 justify-end gap-5">
-                <Tooltip
-                    placement="bottom"
-                    title="Copy"
-                    arrow={false}
-                    color="#9b9b9b"
-                >
-                    <IconCopy
-                        className="cursor-pointer"
-                        onClick={() => handleCopyBlock(question._id)}
-                    />
-                </Tooltip>
-                <Tooltip
-                    placement="bottom"
-                    title="Remove"
-                    arrow={false}
-                    color="#9b9b9b"
-                >
-                    <IconTrash
-                        className="cursor-pointer"
-                        onClick={() => handleRemoveBlock(question._id)}
-                    />
-                </Tooltip>
-                <Tooltip
-                    placement="bottom"
-                    title="Add question"
-                    arrow={false}
-                    color="#9b9b9b"
-                >
-                    <IconPlus
-                        className="cursor-pointer scale-75"
-                        onClick={() => handleAddBlock(question._id)}
-                    />
-                </Tooltip>
-                <div className="h-8 w-[1px] bg-[rgb(218,220,224)]"></div>
+            <div className="w-full flex flex-col items-end sm:flex-row sm:items-center py-2 justify-end gap-5">
+                <div className="flex items-center gap-5">
+                    <Tooltip
+                        placement="bottom"
+                        title="Sao chép câu hỏi"
+                        arrow={false}
+                        color="#9b9b9b"
+                    >
+                        <IconCopy
+                            className="cursor-pointer"
+                            onClick={() => handleCopyBlock(question._id)}
+                        />
+                    </Tooltip>
+                    <Tooltip
+                        placement="bottom"
+                        title="Xóa câu hỏi"
+                        arrow={false}
+                        color="#9b9b9b"
+                    >
+                        <IconTrash
+                            className="cursor-pointer"
+                            onClick={() => handleRemoveBlock(question._id)}
+                        />
+                    </Tooltip>
+                    <Tooltip
+                        placement="bottom"
+                        title="Thêm câu hỏi"
+                        arrow={false}
+                        color="#9b9b9b"
+                    >
+                        <IconPlus
+                            className="cursor-pointer scale-75"
+                            onClick={() => handleAddBlock(question._id)}
+                        />
+                    </Tooltip>
+                </div>
+                <div className="h-8 hidden sm:block w-[1px] bg-[rgb(218,220,224)]"></div>
                 <div className="flex items-center gap-2">
-                    Require
+                    Ẩn câu hỏi
+                    <Switch
+                        value={question?.isHide}
+                        className="bg-[rgb(140,140,140)]"
+                        onChange={(value) => handleDisbale(value, question._id)}
+                    />
+                </div>
+                <div className="h-8 hidden sm:block w-[1px] bg-[rgb(218,220,224)]"></div>
+                <div className="flex items-center gap-2">
+                    Bắt buộc
                     <Switch
                         value={question.isRequire}
                         className="bg-[rgb(140,140,140)]"
