@@ -108,13 +108,13 @@ const FormHeader = (props) => {
                 open={state.isVisibleModalDelete}
                 onCancel={() => handleDelete(false)}
                 onOk={() => handleDelete(false, true)}
-                okText="Delete"
-                cancelText="Cancel"
+                okText="Xóa"
+                cancelText="Hủy"
                 okButtonProps={{className: 'bg-[rgb(103,58,183)]'}}
-                title="Delete form"
+                title="Xóa bài kiểm tra"
                 className="send-form"
             >
-                <div>Bài kiểm tra này sẽ bị xóa, ban chắc chứ?</div>
+                <div>Bài kiểm tra này sẽ bị xóa, bạn chắc chứ?</div>
             </Modal>
         </div>
     );

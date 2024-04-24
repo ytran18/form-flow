@@ -74,7 +74,9 @@ const Responses = (props) => {
 
         let maxDiem = 0;
         if (form?.questions?.length > 0) {
-            maxDiem = form?.questions?.reduce((total, item) => total += Number(item?.diem), 0);
+            form?.questions?.map((item) => {
+                if (!item?.isHide) maxDiem += Number(item?.diem);
+            });
         };
 
         state.totalAnswer = total;

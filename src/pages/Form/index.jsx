@@ -308,7 +308,7 @@ const Form = () => {
                 link = `http://localhost:5000/#/guest/${form?._id}`;
             };
             navigator.clipboard.writeText(link).then(() => {
-                message.success("Copy successfully!")
+                message.success("Sao chép đường dẫn thành công!")
             })
         };
 
@@ -504,13 +504,13 @@ const Form = () => {
                 open={state.isVisibleModalSend}
                 onCancel={handleSend}
                 onOk={() => handleSend('copy')}
-                okText="Copy"
-                cancelText="Cancel"
+                okText="Sao chép đường dẫn"
+                cancelText="Hủy"
                 okButtonProps={{className: 'bg-[rgb(103,58,183)]'}}
-                title="Send form"
+                title="Gửi bài thi"
                 className="send-form"
             >
-                <div className="font-medium text-base pt-5">Link</div>
+                <div className="font-medium text-base pt-5">Đường dẫn</div>
                 <div className="w-full">
                     <input
                         disabled

@@ -83,19 +83,20 @@ const Assignment = (props) => {
     }
 
     const handleSend = async () => {
-        state.isDisableBtn = true;
-        setState(prev => ({...prev}));
         if (state.isInfo === null) {
             message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
             return;
         };
-
+        
         for (let i = 0; i < state.answers.length; i++) {
             if ((state.answers[i]?.value === null || state.answers[i] === null) && form?.questions[i]?.isRequire) {
                 message.error('Vui lòng trả lời đầy đủ các câu hỏi!');
                 return;
             };
         };
+        
+        state.isDisableBtn = true;
+        setState(prev => ({...prev}));
         
         try {
             const cccd_font_pic = await handleUploadCCCD(assignee.cccd_font_pic);

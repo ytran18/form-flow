@@ -76,7 +76,7 @@ const Card = (props) => {
         if (isSave && state.newName) {
             const docRef = doc(fireStore, 'forms', data?._id);
             await updateDoc(docRef, {formTitle: state.newName});
-            message.success('Rename successfully!', 3);
+            message.success('Đổi tên thành công!', 3);
             getData();
         };
 
@@ -90,7 +90,7 @@ const Card = (props) => {
         if (isDelete) {
             const docRef = doc(fireStore, 'forms', data?._id);
             await deleteDoc(docRef);
-            message.success('Delete form successfully!', 3);
+            message.success('Xóa thành công!', 3);
             getData();
         };
 
@@ -186,18 +186,18 @@ const Card = (props) => {
                 </div>
                 <Modal
                     open={state.isOpenModalRename}
-                    okText="OK"
-                    title="Rename"
+                    okText="Đổi"
+                    title="Đổi tên"
                     okButtonProps={{className:"bg-[rgb(132,47,207)]"}}
                     cancelButtonProps={{className:"text-[rgb(132,47,207)]"}}
-                    cancelText="Cancel"
+                    cancelText="Hủy"
                     onOk={() => handleRename(false, true)}
                     onCancel={() => handleRename(false)}
                 >
                     <div className="flex flex-col gap-3">
-                        <div>Please enter a new name for the item:</div>
+                        <div>Nhãy nhập tên mới</div>
                         <Input
-                            placeholder="Enter new name"
+                            placeholder="Hãy nhập tên mới"
                             value={state.newName}
                             onChange={(e) => setState(prev => ({...prev, newName: e?.target?.value}))}
                         />
@@ -205,15 +205,15 @@ const Card = (props) => {
                 </Modal>
                 <Modal
                     open={state.isOpenModalRemove}
-                    okText="OK"
-                    title="Delete form?"
+                    okText="Xóa"
+                    title="Xóa bài kiểm tra"
                     okButtonProps={{className:"bg-[rgb(132,47,207)]"}}
                     cancelButtonProps={{className:"text-[rgb(132,47,207)]"}}
-                    cancelText="Cancel"
+                    cancelText="Hủy"
                     onOk={() => handleRemove(false, true)}
                     onCancel={() => handleRemove(false)}
                 >
-                    <div>This item will be deleted, are you sure?</div>
+                    <div>Bài kiểm tra này sẽ bị xóa, bạn chắc chứ?</div>
                 </Modal>
             </div>
         </Dropdown>
