@@ -236,7 +236,7 @@ const CommonQuestion = (props) => {
             </div>
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
-                    <div className="font-medium">Hình ảnh mặc trước căn cước công dân: <span className="text-red-500">*</span></div>
+                    <div className="font-medium">Chụp hình hoặc mặt trước CCCD: <span className="text-red-500">*</span></div>
                 </div>
                 <Dragger {...uploadProps}>
                     <p className="ant-upload-drag-icon"> <InboxOutlined /> </p>
