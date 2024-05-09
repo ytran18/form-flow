@@ -140,6 +140,7 @@ const CommonQuestion = (props) => {
             birthday: `${state.birthday.date}-${state.birthday.month}-${state.birthday.year}`,
             cccd: state.cccd,
             company: state.company,
+            company_lower: state.company.toLowerCase().trim(),
             cccd_font_pic: state.file[0].originFileObj,
         };
 
