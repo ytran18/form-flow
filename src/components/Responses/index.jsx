@@ -125,7 +125,6 @@ const Responses = (props) => {
 
         if (searchValue) {
             arr.map((item) => {
-                console.log(item);
                 if (item?.name?.toLowerCase()?.includes(searchValue) || item?.cccd?.includes(searchValue) || item?.company?.toLowerCase()?.trim()?.includes(searchValue)) {
                     results.push(item);
                 };
