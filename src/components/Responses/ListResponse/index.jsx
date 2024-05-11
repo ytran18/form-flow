@@ -4,6 +4,7 @@ import { Input, Table, TimePicker } from "antd";
 
 import useWindowSize from "../../../hooks/useWindowSize";
 import { VSO } from "@utils/function";
+import { convertTimeToMinutes, getLastWordFirstChar } from "@utils/function";
 
 const { Search } = Input;
 
@@ -11,20 +12,9 @@ import './style.css';
 
 const ListResponse = (props) => {
 
-    const { title, listUsers, onDetailItem, date, onSearch, searchValue, searchText, dateSearch } = props;
+    const { title, listUsers, onDetailItem, onSearch, searchValue, searchText, dateSearch } = props;
 
     const iw = useWindowSize().width;
-
-    const convertTimeToMinutes = (time) => {
-        const [hours, minutes] = time.split(':');
-        return parseInt(hours) * 60 + parseInt(minutes);
-    };
-
-    const getLastWordFirstChar = (name) => {
-        const words = name.split(' ');
-        const lastWord = words[words.length - 1];
-        return lastWord.charAt(0).toLowerCase();
-    };
 
     const columns = useMemo(() => {
         return VSO(iw, {
@@ -162,7 +152,7 @@ const ListResponse = (props) => {
                 }}
                 onRow={(record, rowIndex) => {
                     return {
-                      onClick: () => onDetailItem(record?._id, date),
+                      onClick: () => onDetailItem(record?._id),
                     };
                 }}
             />

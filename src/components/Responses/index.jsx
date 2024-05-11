@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 import { fireStore } from "@core/firebase/firebase";
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, getDoc, doc } from 'firebase/firestore';
 
-import { Switch, Modal } from 'antd';
+import { Switch, Modal, Input, Table } from 'antd';
 
 import ListResponse from "./ListResponse";
 import DetailResponse from "./DetailResponse";
 
+import { VSO } from "@utils/function";
+import useWindowSize from "../../hooks/useWindowSize";
+import { getLastWordFirstChar, unixTimeToFormattedTime, formatName, setTime } from "@utils/function";
+
 import IconView from '@icon/iconView.svg';
+
+const { Search } = Input;
 
 const Responses = (props) => {
 
@@ -31,11 +37,20 @@ const Responses = (props) => {
         totalAnswer: 0,
         maxDiem: 0,
         tongDiem: 0,
+        isCompanySearch: false,
+        companySearchValue: '',
+        allAnswers: [],
+        companySearchResult: [],
+        candidateSearch: '',
+        candidateSearchResult: [],
     });
+
+    const iw = useWindowSize().width;
 
     const getData = async () => {
         let answersByDate = {};
         let total = 0;
+        const allAnswers = [];
     
         const querySnapshot = await getDocs(query(collection(fireStore, 'answer')));
 
@@ -48,6 +63,7 @@ const Responses = (props) => {
 
             data?.lists?.map((item) => {
                 if (item?.formId === formId) {
+                    allAnswers.push(item);
                     answersByDate[data?.date].push(item);
                     total++;
                 };
@@ -82,35 +98,13 @@ const Responses = (props) => {
         state.totalAnswer = total;
         state.maxDiem = maxDiem;
         state.dates = sortedAnswersByDate;
+        state.allAnswers = allAnswers;
         setState(prev => ({ ...prev }));
     };
 
     useEffect(() => {
         getData();
     },[]);
-
-    const unixTimeToFormattedTime = (unixTime) => {
-        const date = new Date(unixTime * 1000);
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const formattedTime = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2, '0')}`;
-        return {formattedTime, unixTime};
-    }
-
-    const formatName = (name) => {
-        if (typeof name !== 'string') return;
-
-        const arr = name.trim().toLowerCase().split(' ');
-        const format = arr.map(item => item.charAt(0).toUpperCase() + item.slice(1));
-        return format.join(' ');
-    };
-
-    const setTime = (date, year, month, day) => {
-        date.setFullYear(year);
-        date.setMonth(month - 1);
-        date.setDate(day);
-        return date;
-    };
 
     const onSearch = (event, dates) => {
         const searchValue = event?.toLowerCase();
@@ -191,8 +185,15 @@ const Responses = (props) => {
         setState(prev => ({...prev}));
     };    
 
-    const onDetailItem = (id, date) => {
-        const user = state.answers.find(item => item?._id === id);
+    const onDetailItem = async (id, isSearchOutside) => {
+        let user;
+        if (isSearchOutside) {
+            const docRef = doc(fireStore, 'single_answer', id);
+            const test = await getDoc(docRef);
+            if (test.exists()) user = test.data();
+        } else {
+            user = state.answers.find(item => item?._id === id);
+        };
 
         const answer = user?.answers;
         let answerValue = new Array(answer?.length).fill(null);
@@ -252,12 +253,69 @@ const Responses = (props) => {
             }
         });
 
+        if (isSearchOutside) {
+            state.isViewModal = true;
+            state.isDetailTab = true;
+        };
         state.detailAnswer = arr;
         state.detailUser = user;
         state.isDetailTab = true;
         state.tongDiem = tong_diem;
         setState(prev => ({...prev}));
     };
+
+    const handleCompanyNameSearch = (name) => {
+        const { allAnswers } = state;
+        const lowerCaseName = name.toLowerCase().trim();
+        const listsSearch = [];
+
+        allAnswers.map((item) => {
+            if (item?.assignee?.company_lower?.trim()?.includes(lowerCaseName)) {
+                const rs = {
+                    ...item?.assignee,
+                    name: formatName(item?.assignee?.name),
+                    _id: item?.answerId,
+                };
+
+                listsSearch.push(rs);
+            }
+        });
+
+        state.companySearchResult = listsSearch;
+        setState(prev => ({...prev}));
+    };
+
+    useEffect(() => {
+        const { companySearchValue } = state;
+
+        const searchTimeout = setTimeout(() => {
+            if (companySearchValue) {
+                handleCompanyNameSearch(companySearchValue);
+            }
+        }, 2000);
+
+        return () => clearTimeout(searchTimeout);
+    },[state.companySearchValue]);
+
+    useEffect(() => {
+        const { candidateSearch, companySearchResult } = state;
+
+        if (candidateSearch) {
+            const value = [];
+            companySearchResult.map((item) => {
+                const formatName = item?.name?.toLowerCase()?.trim();
+                const formatCCCD = item?.cccd?.toLowerCase()?.trim();
+                const formatSearch = candidateSearch.toLocaleLowerCase().trim();
+                if (formatName?.includes(formatSearch) || formatCCCD?.includes(formatSearch)) {
+                    value.push(item);
+                };
+            });
+
+            state.candidateSearchResult = value;
+            setState(prev => ({...prev}));
+        };
+
+    },[state.candidateSearch]);
 
     const handleNavigateBack = () => {
         state.isDetailTab = false;
@@ -266,6 +324,72 @@ const Responses = (props) => {
 
         setState(prev => ({...prev}));
     };
+
+    const columns = useMemo(() => {
+        return VSO(iw, {
+            900 : [
+                {
+                    title: 'Tên',
+                    dataIndex: 'name',
+                    sorter: (a, b) => {
+                        const aLastChar = getLastWordFirstChar(a.name);
+                        const bLastChar = getLastWordFirstChar(b.name);
+
+                        return aLastChar.localeCompare(bLastChar);
+                    },
+                    sortDirections: ['descend', 'ascend'], 
+                },
+                {
+                    title: 'Số căn cước',
+                    dataIndex: 'cccd',
+                },
+                {
+                    title: 'Công ty',
+                    dataIndex: 'company',
+                },
+                {
+                    title: 'Ngày sinh',
+                    dataIndex: 'birthday',
+                },
+            ],
+
+            768 : [
+                {
+                    title: 'Tên',
+                    dataIndex: 'name',
+                    sorter: (a, b) => {
+                        const aLastChar = getLastWordFirstChar(a.name);
+                        const bLastChar = getLastWordFirstChar(b.name);
+
+                        return aLastChar.localeCompare(bLastChar);
+                    },
+                    sortDirections: ['descend', 'ascend'], 
+                },
+                {
+                    title: 'Số căn cước',
+                    dataIndex: 'cccd',
+                },
+            ],
+            
+            320 : [
+                {
+                    title: 'Tên',
+                    dataIndex: 'name',
+                    sorter: (a, b) => {
+                        const aLastChar = getLastWordFirstChar(a.name);
+                        const bLastChar = getLastWordFirstChar(b.name);
+
+                        return aLastChar.localeCompare(bLastChar);
+                    },
+                    sortDirections: ['descend', 'ascend'], 
+                },
+                {
+                    title: 'Số căn cước',
+                    dataIndex: 'cccd',
+                },
+            ],
+        })
+    },[iw]);
 
     return (
         <div className="w-full flex flex-col gap-5">
@@ -288,25 +412,72 @@ const Responses = (props) => {
             </div>
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] py-3 flex flex-col gap-3">
                 <div className="px-5 pb-3 border-b w-full flex items-center justify-between">
-                    <div className="text-xl">Danh sách phản hồi</div>
+                    {state.isCompanySearch ? (
+                        <Search
+                            placeholder="Tìm kiếm theo công ty"
+                            className="w-[50%]"
+                            value={state.companySearchValue}
+                            onChange={(e) => setState(prev => ({...prev, companySearchValue: e.target.value}))}
+                        />
+                    ) : (
+                        <div className="text-xl">Danh sách phản hồi</div>
+                    )}
+                    <div className="flex items-center gap-3">
+                        <div className="">Tìm kiếm theo công ty</div>
+                        <Switch
+                            className="!bg-[rgb(140,140,140)]"
+                            checked={state.isCompanySearch}
+                            onChange={(checked) => setState(prev => ({...prev, isCompanySearch: checked}))}
+                        />
+                    </div>
                 </div>
                 <div className={`px-5 w-full text-sm flex flex-col gap-3`}>
-                    {Object.keys(state.dates).map((item, index) => {
-                        return (
-                            <div key={`user-complete-${index}`} className="w-full flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <div className="w-40 md:w-64">{item}</div>
-                                    <div className="">{state.dates[item]?.length}</div>
-                                </div>
-                                <div className="">
-                                    <IconView
-                                        className="cursor-pointer"
-                                        onClick={() => handleViewItem(item, state.dates[item])}
-                                    />
-                                </div>
+                    {state.isCompanySearch ? (
+                        <>
+                            <div className="w-full flex justify-end">
+                                <Search
+                                    className="w-1/2"
+                                    placeholder="Tìm kiếm theo tên hoặc CCCD"
+                                    value={state.candidateSearch}
+                                    onChange={(e) => setState(prev => ({...prev, candidateSearch: e.target.value}))}
+                                />
                             </div>
-                        )
-                    })}
+                            <Table
+                                columns={columns}
+                                size="small"
+                                dataSource={state.candidateSearch.length > 0 ? state.candidateSearchResult : state.companySearchResult}
+                                className="overflow-y-auto flex-grow"
+                                tableLayout="5"
+                                sticky={true}
+                                pagination={{
+                                    hideOnSinglePage: true,
+                                    pageSize: 100
+                                }}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onClick: () => onDetailItem(record?._id, true),
+                                    };
+                                }}
+                            />
+                        </>
+                    ) : (
+                        Object.keys(state.dates).map((item, index) => {
+                            return (
+                                <div key={`user-complete-${index}`} className="w-full flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <div className="w-40 md:w-64">{item}</div>
+                                        <div className="">{state.dates[item]?.length}</div>
+                                    </div>
+                                    <div className="">
+                                        <IconView
+                                            className="cursor-pointer"
+                                            onClick={() => handleViewItem(item, state.dates[item])}
+                                        />
+                                    </div>
+                                </div>
+                            )
+                        })
+                    )}
                 </div>
             </div>
             <Modal
