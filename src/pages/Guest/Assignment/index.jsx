@@ -119,6 +119,7 @@ const Assignment = (props) => {
             const answerData = {
                 answerId: rs?._id,
                 formId: form?._id,
+                assignee: user_answer,
             };
 
             const answerRef = doc(collection(fireStore, 'answer'), date);
