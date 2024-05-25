@@ -4,7 +4,8 @@ import { Radio, Button, message } from 'antd';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { fireStore, storage } from "@core/firebase/firebase";
+import { fireStore } from "@core/firebase/firebase";
+import { storage2 } from "@core/firebase/firebase-image";
 import { doc, collection, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -59,7 +60,7 @@ const Assignment = (props) => {
     };
 
     const handleUploadCCCD = async (url) => {
-        const imageRef = ref(storage, `images/${url.uid}`);
+        const imageRef = ref(storage2, `images/${url.uid}`);
         try {
             const snapshot = await uploadBytes(imageRef, url);
             const downloadUrl = await getDownloadURL(imageRef);

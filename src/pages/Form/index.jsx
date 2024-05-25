@@ -12,7 +12,8 @@ import { useFormPackageHook } from "@core/redux/hooks";
 import { useDispatch } from "react-redux";
 import { formPackage } from '@core/redux/actions';
 
-import { fireStore, storage } from '@core/firebase/firebase';
+import { fireStore } from '@core/firebase/firebase';
+import { storage2 } from "@core/firebase/firebase-image";
 import { doc, collection, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -186,7 +187,7 @@ const Form = () => {
     const handleUploadQuestionImage = (url, id) => {
         const index = state.questions.findIndex(item => item._id === id);
 
-        const imageRef = ref(storage, `images/${url.uid}`);
+        const imageRef = ref(storage2, `images/${url.uid}`);
         uploadBytes(imageRef, url).then(() => {
             getDownloadURL(imageRef).then(url => {
                 state.questions[index].image_url = url;
@@ -216,7 +217,7 @@ const Form = () => {
         const index = state.questions.findIndex(item => item._id === id);
         const indexAnswer = state.questions[index].answer.findIndex(item => item.value === value);
 
-        const imageRef = ref(storage, `images/${url.uid}`);
+        const imageRef = ref(storage2, `images/${url.uid}`);
         uploadBytes(imageRef, url).then((snapshot) => {
             getDownloadURL(imageRef).then((url) => {
                 state.questions[index].answer[indexAnswer].img_url = url;
@@ -345,7 +346,7 @@ const Form = () => {
         try {
             let previewURL = '';
             const blob = await handleGetBlob();
-            const imageRef = ref(storage, `images/${uuidv4()}`);
+            const imageRef = ref(storage2, `images/${uuidv4()}`);
             const snapshot = await uploadBytes(imageRef, blob);
             previewURL = await getDownloadURL(imageRef);
 
