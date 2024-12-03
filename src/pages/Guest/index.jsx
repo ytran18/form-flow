@@ -43,8 +43,8 @@ const Guest = () => {
                             const docRef = doc(fireStore, 'forms', splitId);
                             getDoc(docRef).then((snapshot) => {
                                 let form = {};
-                                if (snapshot.data()) form = snapshot.data();
-                                const filterShowQuestions = [...form?.questions].filter(item => item?.isHide === false);
+                                if (snapshot?.data()) form = snapshot?.data();
+                                const filterShowQuestions = [...form?.questions]?.filter(item => item?.isHide === false);
                                 console.log(filterShowQuestions);
                                 state.form = {
                                     ...form,

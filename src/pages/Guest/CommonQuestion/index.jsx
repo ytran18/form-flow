@@ -123,7 +123,7 @@ const CommonQuestion = (props) => {
     };
 
     const handleNext = () => {
-        if (!state.name || !state.birthday.date || !state.birthday.month || !state.birthday.year || !state.cccd || state.file.length === 0) {
+        if (!state.name || !state.birthday.date || !state.birthday.month || !state.birthday.year || !state.cccd) {
             message.error('Hãy nhập đầy đủ thông tin!', 3);
             return;
         };
@@ -141,7 +141,7 @@ const CommonQuestion = (props) => {
             cccd: state.cccd,
             company: state.company,
             company_lower: state.company.toLowerCase().trim(),
-            cccd_font_pic: state.file[0].originFileObj,
+            cccd_font_pic: state.file[0]?.originFileObj,
         };
 
         dispatch(assigneePackage(rs));
@@ -237,7 +237,7 @@ const CommonQuestion = (props) => {
             </div>
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
-                    <div className="font-medium">Chụp ảnh (hình) chân dung hoặc mặt trước CCCD: <span className="text-red-500">*</span></div>
+                    <div className="font-medium">Chụp ảnh (hình) chân dung hoặc mặt trước CCCD:</div>
                 </div>
                 <Dragger {...uploadProps}>
                     <p className="ant-upload-drag-icon"> <InboxOutlined /> </p>

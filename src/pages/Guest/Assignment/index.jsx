@@ -60,6 +60,7 @@ const Assignment = (props) => {
     };
 
     const handleUploadCCCD = async (url) => {
+        if (!url) return;
         const imageRef = ref(storage2, `images/${url.uid}`);
         try {
             const snapshot = await uploadBytes(imageRef, url);
@@ -104,7 +105,7 @@ const Assignment = (props) => {
             
             const user_answer = {
                 ...assignee,
-                cccd_font_pic: cccd_font_pic,
+                cccd_font_pic: cccd_font_pic || '',
             };
             
             const rs = {
