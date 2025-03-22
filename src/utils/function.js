@@ -1,3 +1,6 @@
+import { db2 } from "@core/firebase/firebase-image";
+import { addDoc, collection } from "firebase/firestore";
+
 export const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -55,4 +58,18 @@ export const setTime = (date, year, month, day) => {
     date.setMonth(month - 1);
     date.setDate(day);
     return date;
+};
+
+export const logErrorToFirestore = async (errorMessage) => {
+    try {
+        const timestamp = new Date();
+        await addDoc(collection(db2, "error_log"), {
+            error: errorMessage,
+            date: timestamp.toISOString().split('T')[0], // YYYY-MM-DD
+            time: timestamp.toTimeString().split(' ')[0], // HH:MM:SS
+        });
+        console.log("Error logged to Firestore");
+    } catch (error) {
+        console.error("Failed to log error to Firestore:", error);
+    }
 };

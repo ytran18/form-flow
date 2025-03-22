@@ -6,6 +6,7 @@ import "firebase/storage"
 import "firebase/analytics"
 import "firebase/performance"
 import { getStorage } from "firebase/storage"
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,5 +25,6 @@ const firebaseConfig2 = {
 // Initialize Firebase
 const app2 = initializeApp(firebaseConfig2, 'app2')
 const storage2 = getStorage(app2)
+const db2 = getFirestore(app2);
 
-export {app2, storage2}
+export {app2, storage2, db2}

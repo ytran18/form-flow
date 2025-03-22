@@ -16,6 +16,7 @@ import CommonQuestion from "./CommonQuestion";
 import Assignment from "./Assignment";
 import End from "./End";
 import NotAvailable from "./NotAvailable";
+import { logErrorToFirestore } from "@utils/function";
 
 const Guest = () => {
 
@@ -30,47 +31,49 @@ const Guest = () => {
     });
 
     useEffect(() => {
-        async function getActiveFormLink() {
+        const fetchData = async () => {
             try {
-                const docRef = doc(fireStore, 'active_form', 'data');
-                const snapshot = await getDoc(docRef);
-                if (snapshot.exists()) {
-                    const link = snapshot.data()?.active;
-                    if (link && typeof link === 'string') {
-                        const splitId = link.split('/').pop();
-                        navigate({pathname: `/guest/${splitId}`})
-                        if (splitId) {
-                            const docRef = doc(fireStore, 'forms', splitId);
-                            getDoc(docRef).then((snapshot) => {
-                                let form = {};
-                                if (snapshot?.data()) form = snapshot?.data();
-                                const filterShowQuestions = [...form?.questions]?.filter(item => item?.isHide === false);
-                                console.log(filterShowQuestions);
-                                state.form = {
-                                    ...form,
-                                    questions: filterShowQuestions,
-                                };
-                                state.isAvailable = form?.isAvailable;
-                                state.isLoading = false;
-                                setState(prev => ({...prev}));
-                            });
-                        };
-                    }
-                }
+                const activeDoc = await getDoc(doc(fireStore, 'active_form', 'data'));
+                if (!activeDoc.exists()) return;
+    
+                const link = activeDoc.data().active;
+                if (!link || typeof link !== 'string') return;
+    
+                const splitId = link.split('/').pop();
+                if (!splitId) return;
+    
+                navigate({ pathname: `/guest/${splitId}` });
+    
+                const formDoc = await getDoc(doc(fireStore, 'forms', splitId));
+                if (!formDoc.exists()) return;
+    
+                const form = formDoc.data();
+                const filterShowQuestions = form.questions?.filter(q => !q.isHide) || [];
+
+                setState(prev => ({
+                    ...prev,
+                    form: { ...form, questions: filterShowQuestions },
+                    isAvailable: form.isAvailable,
+                    isLoading: false,
+                }));
             } catch (error) {
                 console.error('Lỗi khi truy xuất dữ liệu từ Firestore:', error);
             }
         };
     
-        getActiveFormLink();
-    
-    }, []);
+        fetchData();
+    }, [navigate]);
 
     const assignee = useAssigneePackageHook();
 
-    const handleNextStep = (data) => {
-        state.activeTab = 1;
-        setState(prev => ({...prev}));
+    const handleNextStep = async (data) => {
+        try {
+            state.activeTab = 1;
+            setState(prev => ({...prev}));
+        } catch (error) {
+            const messgae = `Lỗi khi tiếp tục vào trả lời câu hỏi: ${error}`;
+            await logErrorToFirestore(messgae);
+        }
     };
 
     const handleEnd = () => {

@@ -143,6 +143,8 @@ const Assignment = (props) => {
             message.success('Send answer successfully', 3);
             handleEnd();
         } catch (error) {
+            const errorMessage = `Error when sending answer: ${error}`;
+            await logErrorToFirestore(errorMessage);
             state.isDisableBtn = false;
             setState(prev => ({...prev}));
             console.log(error);

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 import { DatePicker, Button, message, Select, Upload } from 'antd';
-import { DeleteOutlined, InboxOutlined } from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
+import imageCompression from 'browser-image-compression';
 
 import { useDispatch } from "react-redux";
 import { assigneePackage } from "@core/redux/actions";
@@ -9,6 +10,7 @@ import { assigneePackage } from "@core/redux/actions";
 const { Dragger } = Upload;
 
 import './style.css';
+import { logErrorToFirestore } from "@utils/function";
 
 const acceptedImageTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
@@ -157,21 +159,49 @@ const CommonQuestion = (props) => {
         onChange(info) {
             if (info.file.status === "removed") {
                 state.file = [];
-                setState(prev => ({...prev}));
+                setState(prev => ({ ...prev }));
                 return;
             };
-
-            setState(prev => ({...prev, file: [info.file]}))
+    
+            setState(prev => ({ ...prev, file: [info.file] }));
         },
         onDrop(e) {
-          console.log('Dropped files', e.dataTransfer.files);
+            console.log('Dropped files', e.dataTransfer.files);
         },
-        beforeUpload: (file) => {
+        beforeUpload: async (file) => {
             const isPNG = acceptedImageTypes.includes(file.type);
             if (!isPNG) {
-              message.error(`Chỉ chấp nhận các định dạng hình ảnh: png, jpeg, jpg`);
-            };
-            return isPNG || Upload.LIST_IGNORE;
+                const errorMessage = `Chỉ chấp nhận các định dạng hình ảnh: png, jpeg, jpg`;
+                message.error(errorMessage);
+                
+                await logErrorToFirestore(errorMessage); // Log lỗi vào Firestore
+                return Upload.LIST_IGNORE;
+            }
+    
+            try {
+                // Cấu hình nén hình ảnh
+                const options = {
+                    maxSizeMB: 0.5, // Giảm kích thước xuống tối đa 500KB
+                    maxWidthOrHeight: 1024, // Giới hạn chiều rộng/chiều cao tối đa là 1024px
+                    useWebWorker: true,
+                };
+
+                // Nén hình ảnh
+                const compressedFile = await imageCompression(file, options);
+    
+                // Thay thế file gốc bằng file đã nén
+                const newFile = new File([compressedFile], file.name, { type: file.type });
+                state.file = [newFile];
+                setState(prev => ({ ...prev }));
+    
+                return newFile;
+            } catch (error) {
+                const errorMessage = `Lỗi khi nén hình ảnh: ${error.message}`;
+                console.error(errorMessage);
+                message.error('Lỗi khi nén hình ảnh!');
+                await logErrorToFirestore(errorMessage); // Log lỗi vào Firestore
+                return Upload.LIST_IGNORE;
+            }
         },
         fileList: state.file,
     };
