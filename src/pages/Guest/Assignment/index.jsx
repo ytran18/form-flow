@@ -12,6 +12,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useAssigneePackageHook } from "@core/redux/hooks";
 
 import Question from "./Question";
+import { logErrorToFirestore } from "@utils/function";
 
 const Assignment = (props) => {
 
@@ -124,7 +125,7 @@ const Assignment = (props) => {
                 assignee: user_answer,
             };
 
-            const answerRef = doc(collection(fireStore, 'answer'), date);
+            const answerRef = doc(collection(fireStore, 'answer-new'), date);
             const docRef = doc(collection(fireStore, 'single_answer'), rs._id);
 
             const docSnapshot = await getDoc(answerRef);

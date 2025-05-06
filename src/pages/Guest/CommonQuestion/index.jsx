@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+import { logErrorToFirestore } from "@utils/function";
 import { DatePicker, Button, message, Select, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import imageCompression from 'browser-image-compression';
@@ -7,10 +8,8 @@ import imageCompression from 'browser-image-compression';
 import { useDispatch } from "react-redux";
 import { assigneePackage } from "@core/redux/actions";
 
-const { Dragger } = Upload;
-
 import './style.css';
-import { logErrorToFirestore } from "@utils/function";
+const { Dragger } = Upload;
 
 const acceptedImageTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
@@ -226,15 +225,17 @@ const CommonQuestion = (props) => {
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Ngày sinh: <span className="text-red-500">*</span></div>
-                    <div className="w-auto flex items-center gap-5">
+                    <div className="w-auto flex flex-col sm:flex-row items-center gap-5">
                         <DatePicker
                             picker="year"
+                            placeholder="Năm sinh"
+                            className="w-full sm:w-[150px]"
                             onChange={onChangeYear}
                         />
                         <Select
                             showSearch
                             placeholder="Tháng"
-                            style={{width: 120}}
+                            className="w-full sm:w-[150px]"
                             options={months}
                             value={state.birthday.month}
                             onChange={onChangeMonth}
@@ -242,7 +243,7 @@ const CommonQuestion = (props) => {
                         <Select
                             showSearch
                             placeholder="Ngày"
-                            style={{width: 120}}
+                            className="w-full sm:w-[150px]"
                             options={options}
                             value={state.birthday.date}
                             onChange={onChangeDate}

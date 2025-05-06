@@ -52,7 +52,7 @@ const Responses = (props) => {
         let total = 0;
         const allAnswers = [];
     
-        const querySnapshot = await getDocs(query(collection(fireStore, 'answer')));
+        const querySnapshot = await getDocs(query(collection(fireStore, 'answer-new')));
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
