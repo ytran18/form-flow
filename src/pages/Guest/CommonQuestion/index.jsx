@@ -195,7 +195,7 @@ const CommonQuestion = (props) => {
     
                 return newFile;
             } catch (error) {
-                const errorMessage = `Lỗi khi nén hình ảnh: ${error.message}`;
+                const errorMessage = `Lỗi khi nén hình ảnh: ${error}`;
                 console.error(errorMessage);
                 message.error('Lỗi khi nén hình ảnh!');
                 await logErrorToFirestore(errorMessage); // Log lỗi vào Firestore
@@ -225,17 +225,18 @@ const CommonQuestion = (props) => {
             <div className="bg-white rounded-lg p-3 min-h-fit max-h-fit w-full border-[1px] flex flex-col gap-3">
                 <div className="px-5 flex flex-col gap-5">
                     <div className="font-medium">Ngày sinh: <span className="text-red-500">*</span></div>
-                    <div className="w-auto flex flex-col sm:flex-row items-center gap-5">
+                    {/* <div className={`w-auto flex ${iw < 640 ? 'flex-col' : 'flex-row'} items-center gap-5`}> */}
+                    <div className={`w-auto flex flex-col items-center gap-5`}>
                         <DatePicker
                             picker="year"
                             placeholder="Năm sinh"
-                            className="w-full sm:w-[150px]"
+                            className="w-full"
                             onChange={onChangeYear}
                         />
                         <Select
                             showSearch
                             placeholder="Tháng"
-                            className="w-full sm:w-[150px]"
+                            className="w-full"
                             options={months}
                             value={state.birthday.month}
                             onChange={onChangeMonth}
@@ -243,7 +244,7 @@ const CommonQuestion = (props) => {
                         <Select
                             showSearch
                             placeholder="Ngày"
-                            className="w-full sm:w-[150px]"
+                            className="w-full"
                             options={options}
                             value={state.birthday.date}
                             onChange={onChangeDate}

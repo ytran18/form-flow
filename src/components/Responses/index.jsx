@@ -391,6 +391,8 @@ const Responses = (props) => {
         })
     },[iw]);
 
+    if (state.dates.length === 0) return <div className="text-red-400 font-semibold text-center">Đang được cập nhật, nếu không load được hãy refresh trang web vài lần, xin cảm ơn!</div>
+
     return (
         <div className="w-full flex flex-col gap-5">
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] flex flex-col gap-3">
@@ -413,12 +415,16 @@ const Responses = (props) => {
             <div className="bg-white rounded-lg min-h-[136px] max-h-fit w-full border-[1px] py-3 flex flex-col gap-3">
                 <div className="px-5 pb-3 border-b w-full flex items-center justify-between">
                     {state.isCompanySearch ? (
-                        <Search
-                            placeholder="Tìm kiếm theo công ty"
-                            className="w-[50%]"
-                            value={state.companySearchValue}
-                            onChange={(e) => setState(prev => ({...prev, companySearchValue: e.target.value}))}
-                        />
+                        <div className="flex flex-col gap-y-1 w-1/2">
+                            <Search
+                                placeholder="Tìm kiếm theo công ty"
+                                className="w-full"
+                                value={state.companySearchValue}
+                                onChange={(e) => setState(prev => ({...prev, companySearchValue: e.target.value}))}
+                            />
+
+                            <div className="text-red-500 font-semibold">* Tìm kiếm theo tên công ty trước rồi mới tìm kiếm theo tên hoặc cccd theo danh sách người làm bài trong công ty đó!</div>
+                        </div>
                     ) : (
                         <div className="text-xl">Danh sách phản hồi</div>
                     )}
@@ -436,9 +442,10 @@ const Responses = (props) => {
                         <>
                             <div className="w-full flex justify-end">
                                 <Search
-                                    className="w-1/2"
-                                    placeholder="Tìm kiếm theo tên hoặc CCCD"
+                                    className={`${iw < 640 ? 'w-full' : 'w-1/2'}`}
+                                    placeholder="Nhập tên hoặc CCCD (phải tiềm kiếm theo tên công ty trước)"
                                     value={state.candidateSearch}
+                                    disabled={state.companySearchResult.length === 0}
                                     onChange={(e) => setState(prev => ({...prev, candidateSearch: e.target.value}))}
                                 />
                             </div>
