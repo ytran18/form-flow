@@ -108,16 +108,17 @@ const Assignment = (props) => {
                 ...assignee,
                 cccd_font_pic: cccd_font_pic || '',
             };
-            
+
+            const date = unixTimeToDateString(Math.floor(new Date().getTime() / 1000))
+
             const rs = {
                 _id: uuidv4(),
                 formId: form?._id,
                 answers: state.answers, 
                 assignee: user_answer,
-                modified_at: Math.floor(new Date().getTime() / 1000)
+                modified_at: Math.floor(new Date().getTime() / 1000),
+                date: date
             };
-            
-            const date = unixTimeToDateString(Math.floor(new Date().getTime() / 1000))
 
             const answerData = {
                 answerId: rs?._id,

@@ -19,6 +19,7 @@ module.exports = {
             "@images": path.resolve(__dirname, "src", "assets", "images"),
             "@icon": path.resolve(__dirname, "src", "assets", "icons"),
             "@utils": path.resolve(__dirname, "src", "utils"),
+            "@store": path.resolve(__dirname, "src", "store"),
         }
     },
     module: {
@@ -46,6 +47,13 @@ module.exports = {
                   },
                 ],
             },
+            {
+                test: /\.(woff(2)?|ttf|eot|otf)$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'fonts/[name][ext]'
+                }
+            }
         ]
     },
     devServer: {

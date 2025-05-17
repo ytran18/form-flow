@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { fireStore } from "@core/firebase/firebase";
 import { collection, getDocs, query, where, getDoc, doc } from 'firebase/firestore';
 
-import { Switch, Modal, Input, Table } from 'antd';
+import { Switch, Modal, Input, Table, message } from 'antd';
 
 import ListResponse from "./ListResponse";
 import DetailResponse from "./DetailResponse";
@@ -13,12 +13,19 @@ import useWindowSize from "../../hooks/useWindowSize";
 import { getLastWordFirstChar, unixTimeToFormattedTime, formatName, setTime } from "@utils/function";
 
 import IconView from '@icon/iconView.svg';
+import useResponseStore from "@store/reponseStore";
 
 const { Search } = Input;
 
 const Responses = (props) => {
 
     const { formId, form, isAvailable, onToggleChange, isTinhDiem } = props;
+
+    const { answerList } = useResponseStore()
+
+    const setAnswer = useResponseStore(state => state.setAnswer);
+    
+    const resetAnswer = useResponseStore(state => state.resetAnswer);
 
     const [state, setState] = useState({
         isToggle: true,
@@ -142,29 +149,17 @@ const Responses = (props) => {
     };
 
     const handleViewItem = async (date, data) => {
-        const answerIds = data.map(item => item.answerId);
-        const chunkSize = 30;
-    
-        const answerIdChunks = [];
-        for (let i = 0; i < answerIds.length; i += chunkSize) {
-            answerIdChunks.push(answerIds.slice(i, i + chunkSize));
-        }
-    
         const answersList = [];
-    
-        for (const chunk of answerIdChunks) {
-            const answerQuery = query(
-                collection(fireStore, 'single_answer'),
-                where('_id', 'in', chunk)
-            );
-    
-            const querySnapshot = await getDocs(answerQuery);
-            querySnapshot.forEach(doc => {
-                const answerData = doc.data();
-                answersList.push(answerData);
-            });
-        }
-    
+
+        const listAnswerRef = query(collection(fireStore, 'single_answer'), where("date", '==', date))
+
+        const listAnswerSnapshot = await getDocs(listAnswerRef)
+
+        listAnswerSnapshot.forEach((item) => {
+            const answerData = item.data();
+            answersList.push(answerData);
+        })
+
         const users = [...answersList];
         const assignee = [];
     
@@ -176,29 +171,32 @@ const Responses = (props) => {
                 modified_at: unixTimeToFormattedTime(item?.modified_at),
             });
         });
-    
-        state.selectedAssignee = assignee;
-        state.answers = answersList;
-        // state.selectedUsers = users;
-        state.isViewModal = !state.isViewModal;
-        state.dateOpen = date;
-        setState(prev => ({...prev}));
-    };    
+
+        setAnswer(answersList)
+
+        setState(prev => ({ ...prev, selectedAssignee: assignee, answers: answersList, isViewModal: !prev.isViewModal, dateOpen: date}));
+    };
 
     const onDetailItem = async (id, isSearchOutside) => {
         let user;
+
         if (isSearchOutside) {
             const docRef = doc(fireStore, 'single_answer', id);
             const test = await getDoc(docRef);
             if (test.exists()) user = test.data();
         } else {
-            user = state.answers.find(item => item?._id === id);
+            user = answerList?.find(item => item?._id === id);
         };
 
         const answer = user?.answers;
         let answerValue = new Array(answer?.length).fill(null);
 
-        answer.map((item) => {
+        if (!answer?.length === 0 || answer === 'undefined') {
+            message.error('Đang có lỗi xảy ra, vui lòng reload lại trang web')
+            return
+        }
+
+        answer?.map((item) => {
             const index = form?.questions?.findIndex(ele => ele?._id === item?.questionId);
             const type_question = item?.type_question;
 
@@ -391,6 +389,12 @@ const Responses = (props) => {
         })
     },[iw]);
 
+    const handleCloseModal = () => {
+        resetAnswer();
+
+        setState(prev => ({...prev, isViewModal: false, detailAnswer: {}, detailUser: {}, isDetailTab: false, selectedAssignee: []}));
+    }
+
     if (state.dates.length === 0) return <div className="text-red-400 font-semibold text-center">Đang được cập nhật, nếu không load được hãy refresh trang web vài lần, xin cảm ơn!</div>
 
     return (
@@ -490,7 +494,7 @@ const Responses = (props) => {
             <Modal
                 className="!w-[900px]"
                 open={state.isViewModal}
-                onCancel={() => setState(prev => ({...prev, isViewModal: false, detailAnswer: {}, detailUser: {}, isDetailTab: false, selectedAssignee: []}))}
+                onCancel={handleCloseModal}
                 footer={[]}
             >
                 {state.isDetailTab ? (

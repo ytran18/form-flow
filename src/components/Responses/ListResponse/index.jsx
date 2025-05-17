@@ -6,9 +6,12 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import { VSO } from "@utils/function";
 import { convertTimeToMinutes, getLastWordFirstChar } from "@utils/function";
 
-const { Search } = Input;
+import IconEye from '@icon/iconEye.svg'
 
 import './style.css';
+import DelayedDownload from "@core/pdf/DelayedDownload";
+
+const { Search } = Input;
 
 const ListResponse = (props) => {
 
@@ -53,6 +56,21 @@ const ListResponse = (props) => {
                     },
                     sortDirections: ['descend', 'ascend'],
                 },
+                {
+                    title: '',
+                    key: 'actions',
+                    render: (_, data) => {
+                        return (
+                            <div className="flex items-center justify-between">
+                                <DelayedDownload name={data?.name} birthday={data?.birthday} companyName={data?.company} image={data?.cccd_font_pic} id={data?._id} />
+
+                                <div onClick={() => onDetailItem(data?._id)}>
+                                    <IconEye className='w-5 h-5 cursor-pointer' />
+                                </div>
+                            </div>
+                        )
+                    }
+                }
             ],
 
             768 : [
@@ -149,11 +167,6 @@ const ListResponse = (props) => {
                 pagination={{
                     hideOnSinglePage: true,
                     pageSize: 100
-                }}
-                onRow={(record, rowIndex) => {
-                    return {
-                      onClick: () => onDetailItem(record?._id),
-                    };
                 }}
             />
         </div>

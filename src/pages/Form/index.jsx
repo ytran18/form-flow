@@ -23,6 +23,7 @@ import Responses from "@components/Responses";
 import Settings from "@components/Settings";
 
 import './style.css';
+import { FormProvider } from "./context";
 
 const Form = () => {
 
@@ -461,13 +462,15 @@ const Form = () => {
             label: 'Phản hồi',
             key: '2',
             children: (
-                <Responses
-                    form={form}
-                    formId={form?._id}
-                    isAvailable={state.isAvailable}
-                    isTinhDiem={state.isTinhDiem}
-                    onToggleChange={onToggleChange}
-                />
+                <FormProvider form={form}>
+                    <Responses
+                        form={form}
+                        formId={form?._id}
+                        isAvailable={state.isAvailable}
+                        isTinhDiem={state.isTinhDiem}
+                        onToggleChange={onToggleChange}
+                    />
+                </FormProvider>
             )
         },
     ];
